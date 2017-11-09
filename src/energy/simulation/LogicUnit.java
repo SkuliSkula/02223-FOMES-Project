@@ -6,10 +6,8 @@ import model.modeling.message;
 import view.modeling.ViewableAtomic;
 
 public class LogicUnit extends ViewableAtomic {
-	private double generatedEnergy;
-
-	protected customer customer;
-	protected Queue cq;
+	protected Energy energy;
+	// protected Queue cq;
 	protected int noCustomerInQueue;
 	protected double time;
 
@@ -19,10 +17,10 @@ public class LogicUnit extends ViewableAtomic {
 
 	public LogicUnit(String name) {
 		super(name);
-		addInport("inPVPanels");
-		addOutport("outHouse");
+		addInport("inFromPVPanels");
+		addOutport("outToHouse");
 
-		addTestInput("in", new doubleEnt(1000));
+		addTestInput("in", new Energy("C1", 1000));
 	}
 
 	public void initialize() {
@@ -38,11 +36,9 @@ public class LogicUnit extends ViewableAtomic {
 
 		if (phaseIs("passive"))
 			for (int i = 0; i < x.getLength(); i++) {
-				if (messageOnPort(x, "in", i)) {
-					customer c = (customer) x.getValOnPort("in", i);
-					c.service_time = time;
-					this.customer = c;
-					holdIn("busy", c.processing_time);
+				if (messageOnPort(x, "inFromPVPanels", i)) {
+					Energy receivedEnergy = (Energy) x.getValOnPort("inFromPVPanels", i); 
+					this.energy = receivedEnergy;
 					return;
 				}
 
@@ -82,8 +78,8 @@ public class LogicUnit extends ViewableAtomic {
 			m.add(makeContent("next", (signal) new signal("1")));
 		}
 		if (phaseIs("busy")) {
-			this.customer.depart_time = time;
-			m.add(makeContent("out", (customer) this.customer));
+			this.energy.depart_time = time;
+			m.add(makeContent("out", (customer) this.energy));
 		}
 		return m;
 	}
