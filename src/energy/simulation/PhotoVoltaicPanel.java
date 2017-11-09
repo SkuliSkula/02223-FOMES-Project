@@ -17,6 +17,9 @@ public class PhotoVoltaicPanel extends ViewableAtomic { // ViewableAtomic is
 		super(name);
 		addInport("SolIn");
 		addOutport("PowOut");
+		
+		//addTestInput("SolIn", new entity("1000"));
+		//addTestInput("SolIn", new entity("2000"));
 
 		this.time = time;
 
@@ -51,7 +54,7 @@ public class PhotoVoltaicPanel extends ViewableAtomic { // ViewableAtomic is
 	public message out() {
 		message m = new message();
 
-		m.add(makeContent("PowOut", new entity("Generated" + generated * genVal)));
+		m.add(makeContent("PowOut", new Energy(generated * genVal)));
 		return m;
 	}
 }

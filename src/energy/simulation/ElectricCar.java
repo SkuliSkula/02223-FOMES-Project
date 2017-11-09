@@ -5,7 +5,7 @@ public class ElectricCar {
 	private static final double BATTERY_CAPACITY = 100; // This is 100kW
 	
 	public ElectricCar() {
-		this.carBattery = new Battery(BATTERY_CAPACITY);
+		//this.carBattery = new Battery(BATTERY_CAPACITY);
 	}
 	
 	

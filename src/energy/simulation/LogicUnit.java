@@ -75,6 +75,6 @@ public class LogicUnit extends ViewableAtomic {
 	}
 
 	public String getTooltipText() {
-		return super.getTooltipText() + "\n" + "job: ";
+		return super.getTooltipText() + "\n" + "logic unit job: ";
 	}
 }
