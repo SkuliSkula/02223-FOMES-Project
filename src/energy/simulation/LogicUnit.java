@@ -11,8 +11,17 @@ public class LogicUnit extends ViewableAtomic {
 
 	public LogicUnit(String name, double time, double incrementTime) {
 		super(name);
-		addInport("inFromPVPanels");
+		addInport("inFromPVPanel");
+		addInport("inFromHouse"); // Request energy
+		addInport("inExtraFromBattery"); // Excesive flow of energy from the battery
+		addInport("inFromBattery"); // Energy back after request
+		addInport("inExtraFromEV"); // Excesive energy from the Electric vehicle
+		
 		addOutport("outToHouse");
+		addOutport("outToBattery");
+		addOutport("outToEG");
+		addOutport("outRequestEnergy"); // House or electric car can request energy
+		addOutport("outToEV"); // EV = Electric vehicle
 		
 		this.time = time;
 		this.incrementTime = incrementTime;

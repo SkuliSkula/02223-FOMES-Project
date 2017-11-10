@@ -16,8 +16,8 @@ public class PhotoVoltaicPanel extends ViewableAtomic { // ViewableAtomic is
 
 	public PhotoVoltaicPanel(String name, double time, double incrementTime) {
 		super(name);
-		addInport("SolIn");
-		addOutport("PowOut");
+		addInport("inFromEXPF");
+		addOutport("outToLU");
 
 		this.time = 0;
 		this.incrementTime = incrementTime;

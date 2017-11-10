@@ -15,8 +15,8 @@ public class House extends ViewableAtomic {
 
 	public House(String name, double time, double incrementTime) {
 		super(name);
-		addInport("in");
-		addOutport("out");
+		addInport("inFromLU");
+		addOutport("outToLU");
 
 		this.time = time;
 		this.incrementTime = incrementTime;

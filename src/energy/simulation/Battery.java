@@ -19,10 +19,10 @@ public class Battery extends ViewableAtomic { // ViewableAtomic is used instead
 
 	public Battery(String name) {
 		super(name);
-		addInport("in");
-		addInport("statusIn");
-		addOutport("out");
-		addOutport("statusOut");
+		addInport("inFromLU"); // Charge the battery
+		addInport("inFromLURequest"); // Requested energy from House or Electric car
+		addOutport("outExtraToLU");
+		addOutport("outToLU"); // Send the requested energy
 	}
 
 	public void initialize() {
