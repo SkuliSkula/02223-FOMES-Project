@@ -26,12 +26,13 @@ public class PhotoVoltaicPanel extends ViewableAtomic { // ViewableAtomic is
 	}
 
 	public void initialize() {
-		holdIn("active", time);
+		holdIn("idle", 0);
 		generated = 0;
 		genVal = 345;
 		super.initialize();
 	}
-
+	// external function like input
+	// e = elapsed time
 	public void deltext(double e, message x) {
 		time += e;
 		System.out.println("PV panels, value of e: " + e);
@@ -43,7 +44,7 @@ public class PhotoVoltaicPanel extends ViewableAtomic { // ViewableAtomic is
 			}
 		}
 	}
-
+	// internal function like time
 	public void deltint() {
 		time += incrementTime;
 		if (phaseIs("active")) {
@@ -52,7 +53,12 @@ public class PhotoVoltaicPanel extends ViewableAtomic { // ViewableAtomic is
 			holdIn("active", time);
 		}
 	}
-
+	
+	// If deltint and deltext happen at the same time this function decides the priority
+	public void deltcon(double e, message x) {
+		
+	}
+	
 	public message out() {
 		message m = new message();
 
