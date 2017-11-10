@@ -11,29 +11,28 @@ public class House extends ViewableAtomic {
 	protected entity ent;
 	protected int genVal;
 	protected Energy en;
+	protected double incrementTime;
 
-	public House() {
-		this("house");
-	}
-
-	public House(String name) {
+	public House(String name, double time, double incrementTime) {
 		super(name);
-
 		addInport("in");
 		addOutport("out");
 
-		// addTestInput("in", new Energy(500));
+		this.time = time;
+		this.incrementTime = incrementTime;
+		
+		initialize();
 	}
 
 	public void initialize() {
 		phase = "active";
 		sigma = INFINITY;
 		super.initialize();
-		time = 0;
 	}
 
 	public void deltint() {
-		time += sigma;
+		time += incrementTime;
+		holdIn("active", time);
 	}
 
 	// I receive 0 or smth
@@ -49,7 +48,7 @@ public class House extends ViewableAtomic {
 					// Maybe add the energy in later iterations, not just instantiate it
 					this.en = energy;
 					this.consumed += energy.getEnergy();
-					return;
+					holdIn("active", time);
 				}
 			}
 		System.out.println("So far, the house has consumed " + consumed + " energies");

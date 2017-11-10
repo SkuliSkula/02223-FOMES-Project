@@ -9,6 +9,9 @@ import view.modeling.ViewableDigraph;
 
 public class HomeAutomationSystem extends ViewableDigraph {
 
+	private double time;
+	private double incrementTime;
+	
 	public HomeAutomationSystem(String name) {
 		super(name);
 		homeAutomationConstruct();
@@ -24,10 +27,13 @@ public class HomeAutomationSystem extends ViewableDigraph {
 		addInport("in");
 		addOutport("out");
 
-		ViewableAtomic pvPanel = new PhotoVoltaicPanel("PVpanel", 3);
+		this.time = 1;
+		this.incrementTime = 1;
+		
+		ViewableAtomic pvPanel = new PhotoVoltaicPanel("PVpanel", this.time, incrementTime);
 		ViewableAtomic battery = new Battery("SuperBattery");
-		ViewableAtomic logicUnit = new LogicUnit("LogicUnit");
-		ViewableAtomic house = new House("AdrianHouse");
+		ViewableAtomic logicUnit = new LogicUnit("LogicUnit", this.time, incrementTime);
+		ViewableAtomic house = new House("AdrianHouse", this.time, incrementTime);
 
 		add(pvPanel);
 		add(battery);

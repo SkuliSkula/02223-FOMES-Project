@@ -1,33 +1,29 @@
 package energy.simulation;
 
-import GenCol.doubleEnt;
-import GenCol.entity;
 import model.modeling.message;
 import view.modeling.ViewableAtomic;
 
 public class LogicUnit extends ViewableAtomic {
 	protected Energy energy;
-	// protected Queue cq;
 	protected int noCustomerInQueue;
 	protected double time;
+	protected double incrementTime;
 
-	public LogicUnit() {
-		this("LogicUnit");
-	}
-
-	public LogicUnit(String name) {
+	public LogicUnit(String name, double time, double incrementTime) {
 		super(name);
 		addInport("inFromPVPanels");
 		addOutport("outToHouse");
+		
+		this.time = time;
+		this.incrementTime = incrementTime;
 
-		//addTestInput("in", new Energy(1000));
+		initialize();
 	}
 
 	public void initialize() {
-		phase = "passive";
+		phase = "active";
 		sigma = INFINITY;
 		super.initialize();
-		time = 0;
 	}
 
 	public void deltext(double e, message x) {
@@ -38,8 +34,9 @@ public class LogicUnit extends ViewableAtomic {
 			for (int i = 0; i < x.getLength(); i++) {
 				if (messageOnPort(x, "inFromPVPanels", i)) {
 					Energy receivedEnergy = (Energy) x.getValOnPort("inFromPVPanels", i);
+					System.out.println("Logic unit - receiving energy: " + receivedEnergy.getEnergy());
 					this.energy = receivedEnergy;
-					return;
+					holdIn("active", time);
 				}
 			}
 		}
@@ -48,7 +45,9 @@ public class LogicUnit extends ViewableAtomic {
 	}
 
 	public void deltint() {
-		time += sigma;
+		//time += sigma;
+		time += incrementTime;
+		holdIn("active", time);
 	}
 
 	public void deltcon(double e, message x) {
@@ -58,12 +57,17 @@ public class LogicUnit extends ViewableAtomic {
 
 	public message out() {
 		message m = new message();
-
+		System.out.println("Logic unit message out(): before if " + energy.getEnergy());
+		
 		if (phaseIs("active")) {
+			System.out.println("Logic unit message out(): inside active " + energy.getEnergy());
 			if (energy.getEnergy() != 0) {
+				System.out.println("Logic unit message out(): energy is not 0 " + energy.getEnergy());
 				m.add(makeContent("outToHouse", energy));
 			} else {
-				m.add(makeContent("outToHouse", new Energy()));
+				Energy e = new Energy();
+				m.add(makeContent("outToHouse", e));
+				System.out.println("Logic unit message out(): energy is " + e.getEnergy());
 			}
 
 		}

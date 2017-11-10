@@ -12,16 +12,15 @@ public class PhotoVoltaicPanel extends ViewableAtomic { // ViewableAtomic is
 	protected int generated;
 	protected entity ent;
 	protected int genVal;
+	protected double incrementTime;
 
-	public PhotoVoltaicPanel(String name, double time) {
+	public PhotoVoltaicPanel(String name, double time, double incrementTime) {
 		super(name);
 		addInport("SolIn");
 		addOutport("PowOut");
-		
-		//addTestInput("SolIn", new entity("1000"));
-		//addTestInput("SolIn", new entity("2000"));
 
-		this.time = time;
+		this.time = 0;
+		this.incrementTime = incrementTime;
 
 		initialize();
 	}
@@ -35,6 +34,7 @@ public class PhotoVoltaicPanel extends ViewableAtomic { // ViewableAtomic is
 
 	public void deltext(double e, message x) {
 		time += e;
+		System.out.println("PV panels, value of e: " + e);
 		Continue(e);
 		for (int i = 0; i < x.getLength(); i++) {
 			if (messageOnPort(x, "SolIn", i)) {
@@ -45,8 +45,10 @@ public class PhotoVoltaicPanel extends ViewableAtomic { // ViewableAtomic is
 	}
 
 	public void deltint() {
+		time += incrementTime;
 		if (phaseIs("active")) {
-			generated = generated + 1;
+			//generated = generated + 1;
+			generated = 1;
 			holdIn("active", time);
 		}
 	}
