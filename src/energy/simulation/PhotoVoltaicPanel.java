@@ -32,6 +32,7 @@ public class PhotoVoltaicPanel extends ViewableAtomic {
 		timeCycle = 0;
 		year = new Year();
 		monthCounter = 0;
+		dayCounter = 1;
 		super.initialize();
 	}
 	// external function like input
@@ -44,8 +45,6 @@ public class PhotoVoltaicPanel extends ViewableAtomic {
 			if (messageOnPort(x, "inFromEXPF", i)) {
 				ent = x.getValOnPort("SolIn", i);
 				
-				// calculate the production
-				// check that time needs to be reste
 				timeCycle = (int)time % 24;
 				
 				if(timeCycle == 23)
@@ -58,6 +57,10 @@ public class PhotoVoltaicPanel extends ViewableAtomic {
 				double genValMultiplier = year.getMonths().get(monthCounter).getDayArray()[timeCycle];
 				generated = (int)(generated * genValMultiplier);
 				
+				System.out.println("Day: " + dayCounter);
+				System.out.println("Month: " + monthCounter);
+				System.out.println("Generated: " + generated);
+				
 				holdIn("active", time);
 			}
 			else if(messageOnPort(x, "outFromEXPF", i)) {
@@ -68,12 +71,7 @@ public class PhotoVoltaicPanel extends ViewableAtomic {
 
 	// internal function like time
 	public void deltint() {
-		time += incrementTime;
-		if (phaseIs("active")) {
-			//generated = generated + 1;
-			generated = 1;
-			holdIn("active", time);
-		}
+		
 	}
 	
 	// If deltint and deltext happen at the same time this function decides the priority
@@ -84,8 +82,8 @@ public class PhotoVoltaicPanel extends ViewableAtomic {
 	public message out() {
 		message m = new message();
 
-		m.add(makeContent("PowOut", new Energy(generated * genVal)));
-		generated = 345;
+		m.add(makeContent("outToLU", new Energy(generated * genVal)));
+		generated = 345; // reset the generated value
 		return m;
 	}
 }
