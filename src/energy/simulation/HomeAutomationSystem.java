@@ -37,7 +37,6 @@ public class HomeAutomationSystem extends ViewableDigraph {
 		ViewableAtomic house = new House("AdrianHouse", this.time, incrementTime);
 		ViewableAtomic electricCar = new ElectricCar();
 		ViewableAtomic externalGrid = new ExternalPowerGrid();
-		ViewableAtomic generator = new Generator();
 
 		add(pvPanel);
 		add(battery);
@@ -45,10 +44,6 @@ public class HomeAutomationSystem extends ViewableDigraph {
 		add(house);
 		add(electricCar);
 		add(externalGrid);
-		add(generator);
-
-		//addTestInput("in", new entity("1000"));
-		//addTestInput("in", new entity("2000"));
 
 		initialize();
 
@@ -63,7 +58,6 @@ public class HomeAutomationSystem extends ViewableDigraph {
 		addCoupling(battery, "outToLU", logicUnit, "inFromBattery");
 		addCoupling(logicUnit, "outToBattery", battery, "inFromLU");
 		addCoupling(battery, "outExtraToLU", logicUnit, "inExtraFromBattery");
-		addCoupling(generator, "outFromEXPF", pvPanel, "inFromEXPF");
 		addCoupling(house, "out", this, "outFromHouse");
 		addCoupling(externalGrid, "outToTrancducer", this, "outFromGrid");
 	}
@@ -74,12 +68,12 @@ public class HomeAutomationSystem extends ViewableDigraph {
     public void layoutForSimView()
     {
         preferredSize = new Dimension(893, 588);
-        ((ViewableComponent)withName("LogicUnit")).setPreferredLocation(new Point(204, 184));
-        ((ViewableComponent)withName("Generator")).setPreferredLocation(new Point(50, 50));
         ((ViewableComponent)withName("PVpanel")).setPreferredLocation(new Point(-17, 231));
         ((ViewableComponent)withName("AdrianHouse")).setPreferredLocation(new Point(415, 97));
-        ((ViewableComponent)withName("Tesla Model s")).setPreferredLocation(new Point(50, 50));
+        ((ViewableComponent)withName("LogicUnit")).setPreferredLocation(new Point(204, 184));
         ((ViewableComponent)withName("SuperBattery")).setPreferredLocation(new Point(64, 443));
         ((ViewableComponent)withName("External Grid")).setPreferredLocation(new Point(50, 50));
+        ((ViewableComponent)withName("Tesla Model s")).setPreferredLocation(new Point(50, 50));
+        ((ViewableComponent)withName("Generator")).setPreferredLocation(new Point(50, 50));
     }
 }

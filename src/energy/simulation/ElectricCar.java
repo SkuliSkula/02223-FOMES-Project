@@ -60,7 +60,7 @@ public class ElectricCar extends ViewableAtomic {
 						energyReceived.setEnergy(0);
 
 						if (charged()) {
-							holdIn("idle", INC_TIME);
+							holdIn("idle", INFINITY);
 						} else {
 							holdIn("charging", INC_TIME);
 						}
@@ -74,7 +74,7 @@ public class ElectricCar extends ViewableAtomic {
 							energyExtra = (Energy) x.getValOnPort("inFromLU", i);
 						}
 					}
-					holdIn("idle", INC_TIME);
+					holdIn("idle", INFINITY);
 				} else {
 					holdIn("charging", INC_TIME);
 				}
