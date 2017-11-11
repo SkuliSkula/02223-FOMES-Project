@@ -11,7 +11,7 @@ public class Simulator extends ViewableDigraph {
 	}
 
 	public Simulator() {
-		super("HomeAutomationSystem");
+		super("Simulator");
 		simulatorConstruct();
 	}
 
@@ -21,7 +21,7 @@ public class Simulator extends ViewableDigraph {
 		addOutport("out");
 		
 		ViewableDigraph homeAutomationSystem = new HomeAutomationSystem("HomeAutomationSystem");
-		ViewableDigraph experimentalFrame  = new ExperimentalFrame("HomeAutomationSystem");
+		ViewableDigraph experimentalFrame  = new ExperimentalFrame("ExperimentalFrame");
 
 		add(homeAutomationSystem);
 		add(experimentalFrame);
