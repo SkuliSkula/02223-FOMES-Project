@@ -10,7 +10,7 @@ public class Generator extends ViewableAtomic{
 	private int timeCycle;
 	private int monthCounter;
 	private int dayCounter;
-	private int hour;
+	private int time;
 	double genValMultiplier;
 	public Generator() {
 		super("Generator");
@@ -24,26 +24,28 @@ public class Generator extends ViewableAtomic{
 	
 	public void initialize() {
 		holdIn("active", INFINITY);
-		sigma = 1;
+		sigma = INFINITY;
 		timeCycle = 0;
 		year = new Year();
 		monthCounter = 0;
 		dayCounter = 1;
-		hour = 0;
+		time = 0;
 		super.initialize();
+		System.out.println("########## init generator");
 	}
 	
 	public void deltint(double e, message x) {
-		
+		System.out.println("############### internal generator");
+		time += 1;
 	}
 
 	public void deltext(double e, message x) {
-		
+		System.out.println("############## external generator");
 		for(int i = 0; i < x.getLength(); i++) {
 			if(messageOnPort(x, "start", i)) {
 				
 				//hour = (int) e;
-				timeCycle = (int)hour % 24;
+				timeCycle = (int)time % 24;
 				
 				if(timeCycle == 23)
 					dayCounter++;
@@ -54,11 +56,10 @@ public class Generator extends ViewableAtomic{
 
 				genValMultiplier = year.getMonths().get(monthCounter).getDayArray()[timeCycle];
 				
-				hour++;
 				System.out.println("Day: " + dayCounter);
 				System.out.println("Month: " + monthCounter);
 				
-				holdIn("active", hour);
+				holdIn("active", time);
 			}
 			else if(messageOnPort(x, "stop", i)) {
 				holdIn("idle", INFINITY);
@@ -67,6 +68,7 @@ public class Generator extends ViewableAtomic{
 	}
 
 	public message out() {
+		System.out.println("############### out generator");
 		message m = new message();
 		m.add(makeContent("outToPV", new doubleEnt(genValMultiplier)));
 		return m;
