@@ -73,10 +73,13 @@ public class HomeAutomationSystem extends ViewableDigraph {
      */
     public void layoutForSimView()
     {
-        preferredSize = new Dimension(838, 560);
-        ((ViewableComponent)withName("SuperBattery")).setPreferredLocation(new Point(64, 443));
-        ((ViewableComponent)withName("AdrianHouse")).setPreferredLocation(new Point(502, 98));
-        ((ViewableComponent)withName("PVpanel")).setPreferredLocation(new Point(-17, 231));
+        preferredSize = new Dimension(893, 588);
         ((ViewableComponent)withName("LogicUnit")).setPreferredLocation(new Point(204, 184));
+        ((ViewableComponent)withName("Generator")).setPreferredLocation(new Point(50, 50));
+        ((ViewableComponent)withName("PVpanel")).setPreferredLocation(new Point(-17, 231));
+        ((ViewableComponent)withName("AdrianHouse")).setPreferredLocation(new Point(415, 97));
+        ((ViewableComponent)withName("Tesla Model s")).setPreferredLocation(new Point(50, 50));
+        ((ViewableComponent)withName("SuperBattery")).setPreferredLocation(new Point(64, 443));
+        ((ViewableComponent)withName("External Grid")).setPreferredLocation(new Point(50, 50));
     }
 }

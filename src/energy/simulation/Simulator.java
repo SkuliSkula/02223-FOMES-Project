@@ -36,4 +36,5 @@ public class Simulator extends ViewableDigraph {
 		addCoupling(homeAutomationSystem, "outFromHouse", experimentalFrame, "inFromHouse");
 		addCoupling(experimentalFrame, "outFromGenerator", homeAutomationSystem, "in");
 	}
+   
 }
