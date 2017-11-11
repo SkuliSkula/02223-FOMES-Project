@@ -17,16 +17,16 @@ public class Year {
 		// Create the days arrays
 		
 		months.add(new Month("January", 31, hours1()));
-		months.add(new Month("February", 28, hours1()));
-		months.add(new Month("March", 31, hours2()));
-		months.add(new Month("April", 30, hours3()));
-		months.add(new Month("Mai", 31, hours4()));
-		months.add(new Month("June", 30, hours5()));
-		months.add(new Month("July", 31, hours5()));
-		months.add(new Month("August", 31, hours5()));
-		months.add(new Month("September", 30, hours4()));
+		months.add(new Month("February", 28, hours2()));
+		months.add(new Month("March", 31, hours4()));
+		months.add(new Month("April", 30, hours5()));
+		months.add(new Month("Mai", 31, hours8()));
+		months.add(new Month("June", 30, hours8()));
+		months.add(new Month("July", 31, hours8()));
+		months.add(new Month("August", 31, hours7()));
+		months.add(new Month("September", 30, hours5()));
 		months.add(new Month("October", 31, hours3()));
-		months.add(new Month("November", 30, hours2()));
+		months.add(new Month("November", 30, hours1()));
 		months.add(new Month("December", 31, hours1()));
 	}
 	
@@ -44,8 +44,8 @@ public class Year {
 		hours[9] = 0.0;
 		hours[10] = 0.0;
 		hours[11] = 0.0;
-		hours[12] = 0.0;
-		hours[13] = 0.0;
+		hours[12] = 0.5;
+		hours[13] = 0.5;
 		hours[14] = 0.0;
 		hours[15] = 0.0;
 		hours[16] = 0.0;
@@ -72,10 +72,10 @@ public class Year {
 		hours[8] = 0.0;
 		hours[9] = 0.0;
 		hours[10] = 0.0;
-		hours[11] = 0.0;
-		hours[12] = 0.0;
-		hours[13] = 0.0;
-		hours[14] = 0.0;
+		hours[11] = 0.5;
+		hours[12] = 0.5;
+		hours[13] = 0.5;
+		hours[14] = 0.5;
 		hours[15] = 0.0;
 		hours[16] = 0.0;
 		hours[17] = 0.0;
@@ -100,11 +100,11 @@ public class Year {
 		hours[7] = 0.0;
 		hours[8] = 0.0;
 		hours[9] = 0.0;
-		hours[10] = 0.0;
-		hours[11] = 0.0;
-		hours[12] = 0.0;
-		hours[13] = 0.0;
-		hours[14] = 0.0;
+		hours[10] = 0.5;
+		hours[11] = 1;
+		hours[12] = 0.5;
+		hours[13] = 0.5;
+		hours[14] = 0.5;
 		hours[15] = 0.0;
 		hours[16] = 0.0;
 		hours[17] = 0.0;
@@ -129,11 +129,11 @@ public class Year {
 		hours[7] = 0.0;
 		hours[8] = 0.0;
 		hours[9] = 0.0;
-		hours[10] = 0.0;
-		hours[11] = 0.0;
-		hours[12] = 0.0;
-		hours[13] = 0.0;
-		hours[14] = 0.0;
+		hours[10] = 0.5;
+		hours[11] = 1;
+		hours[12] = 1;
+		hours[13] = 1;
+		hours[14] = 0.5;
 		hours[15] = 0.0;
 		hours[16] = 0.0;
 		hours[17] = 0.0;
@@ -157,12 +157,12 @@ public class Year {
 		hours[6] = 0.0;
 		hours[7] = 0.0;
 		hours[8] = 0.0;
-		hours[9] = 0.0;
-		hours[10] = 0.0;
-		hours[11] = 0.0;
-		hours[12] = 0.0;
-		hours[13] = 0.0;
-		hours[14] = 0.0;
+		hours[9] = 0.5;
+		hours[10] = 1;
+		hours[11] = 1;
+		hours[12] = 1;
+		hours[13] = 1;
+		hours[14] = 0.5;
 		hours[15] = 0.0;
 		hours[16] = 0.0;
 		hours[17] = 0.0;
@@ -175,7 +175,65 @@ public class Year {
 		return hours;
 	}
 	
-	private class Month {
+	private double[] hours7() {
+		double[] hours = new double[24];
+		hours[0] = 0.0;
+		hours[1] = 0.0;
+		hours[2] = 0.0;
+		hours[3] = 0.0;
+		hours[4] = 0.0;
+		hours[5] = 0.0;
+		hours[6] = 0.0;
+		hours[7] = 0.0;
+		hours[8] = 0.0;
+		hours[9] = 0.5;
+		hours[10] = 1;
+		hours[11] = 1;
+		hours[12] = 1;
+		hours[13] = 1;
+		hours[14] = 1;
+		hours[15] = 1;
+		hours[16] = 0.5;
+		hours[17] = 0.0;
+		hours[18] = 0.0;
+		hours[19] = 0.0;
+		hours[20] = 0.0;
+		hours[21] = 0.0;
+		hours[22] = 0.0;
+		hours[23] = 0.0;
+		return hours;
+	}
+	
+	private double[] hours8() {
+		double[] hours = new double[24];
+		hours[0] = 0.0;
+		hours[1] = 0.0;
+		hours[2] = 0.0;
+		hours[3] = 0.0;
+		hours[4] = 0.0;
+		hours[5] = 0.0;
+		hours[6] = 0.0;
+		hours[7] = 0.0;
+		hours[8] = 0.0;
+		hours[9] = 0.5;
+		hours[10] = 1;
+		hours[11] = 1;
+		hours[12] = 1;
+		hours[13] = 1;
+		hours[14] = 1;
+		hours[15] = 1;
+		hours[16] = 1;
+		hours[17] = 0.5;
+		hours[18] = 0.0;
+		hours[19] = 0.0;
+		hours[20] = 0.0;
+		hours[21] = 0.0;
+		hours[22] = 0.0;
+		hours[23] = 0.0;
+		return hours;
+	}
+	
+	class Month {
 		private String month;
 		private int length;
 		private double[] dayArray;
@@ -195,18 +253,6 @@ public class Year {
 		
 		public String getMonthName() {
 			return this.month;
-		}
-	}
-	
-	public static void main(String[] args) {
-		
-		Year year = new Year();
-		
-		for(int i = 0; i < year.getMonths().size(); i++) {
-			System.out.println(year.getMonths().get(i).getMonthName());
-			for(int j = 0; j < year.getMonths().get(i).getDayArray().length; j++)
-				System.out.println(year.getMonths().get(i).getDayArray()[j]);
-			System.out.println();
 		}
 	}
 }
