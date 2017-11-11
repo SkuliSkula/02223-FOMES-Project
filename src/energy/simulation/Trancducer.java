@@ -10,6 +10,7 @@ public class Trancducer extends ViewableAtomic {
 	private ArrayList<Double> houseUsage;
 	private ArrayList<Double> extraEnergy;
 	protected double clock, total_ta, observation_time;
+	private int counter;
 	public Double count = 0.00;
 
 	public Trancducer(String name, double Observation_time) {
@@ -30,7 +31,7 @@ public class Trancducer extends ViewableAtomic {
 		phase = "active";
 		sigma = observation_time;
 		clock = 0;
-		total_ta = 0;
+		counter = 0;
 		super.initialize();
 		holdIn("active", INFINITY);
 	}
@@ -48,6 +49,7 @@ public class Trancducer extends ViewableAtomic {
 			if (messageOnPort(x, "inFromHouse", i)) {
 				houseUsage.add(((Energy) x.getValOnPort("inFromHouse", i)).getEnergy());
 				System.out.println();
+				counter++;
 			}
 			if (messageOnPort(x, "inFromGrid", i)) {
 				extraEnergy.add(((Energy) x.getValOnPort("inFromGrid", i)).getEnergy());
@@ -77,6 +79,9 @@ public class Trancducer extends ViewableAtomic {
 				}*/
 			}
 		}
+		if(counter > 8759){
+			holdIn("staahp", INFINITY);
+		}
 	}
 
 	public void deltint() {
@@ -87,7 +92,9 @@ public class Trancducer extends ViewableAtomic {
 
 	public message out() {
 		message m = new message();
-		
+		if(phaseIs("staahp")){
+			m.add(makeContent("out", new entity()));
+		}
 		/*content con1 = makeContent("TA", new entity(" " + compute_TA()));
 		content con2 = makeContent("out", new entity(count.toString()));
 		content con3 = makeContent("Thru", new entity(" " + compute_Thru()));
