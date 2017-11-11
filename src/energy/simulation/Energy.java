@@ -17,6 +17,10 @@ public class Energy extends entity {
 		return this.energy;
 	}
 
+	public void setEnergy(double energy) {
+		this.energy = energy;
+	}
+
 	public void print() {
 		System.out.println("Energy: " + energy);
 	}

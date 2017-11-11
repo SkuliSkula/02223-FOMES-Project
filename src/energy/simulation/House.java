@@ -1,67 +1,79 @@
 package energy.simulation;
 
-import GenCol.entity;
 import model.modeling.message;
 import view.modeling.ViewableAtomic;
 
 public class House extends ViewableAtomic {
+	private Energy energyRequested;
+	private Energy energyReceived;
+	private final double[] CONSUMPTION_WH = { 110, 110, 110, 110, 110, 110, 110, 400, 400, 110, 110, 110,
+			110, 110, 110, 110, 110, 450, 450, 450, 450, 400, 110, 110 };
 
-	protected double time;
-	protected double consumed;
-	protected entity ent;
-	protected int genVal;
-	protected Energy en;
-	protected double incrementTime;
+	private final int INC_TIME = 1;
+	private int dayHour;
+	private int time;
+	private double consumed;
 
 	public House(String name, double time, double incrementTime) {
 		super(name);
 		addInport("inFromLU");
 		addOutport("outToLU");
+		addOutport("outToEXPF");
 
-		this.time = time;
-		this.incrementTime = incrementTime;
-		
 		initialize();
 	}
 
 	public void initialize() {
-		phase = "active";
+		phase = "requesting";
 		sigma = INFINITY;
 		super.initialize();
+
+		energyRequested = new Energy();
+		energyReceived = new Energy();
+		time = 0;
+		dayHour = 0;
+		consumed = 0;
 	}
 
 	public void deltint() {
-		time += incrementTime;
-		holdIn("active", time);
+		time += sigma;
 	}
 
-	// I receive 0 or smth
 	public void deltext(double e, message x) {
-		time += e;
 		Continue(e);
+		time += e;
 
-		if (phaseIs("active"))
+		if (phaseIs("requesting")) {
+			dayHour = time % 24;
+			energyRequested = new Energy(CONSUMPTION_WH[dayHour]);
+			holdIn("receiving", INC_TIME);
+		} else if (phaseIs("receiving")) {
 			for (int i = 0; i < x.getLength(); i++) {
-				if (messageOnPort(x, "in", i)) {
-					Energy energy = (Energy) x.getValOnPort("in", i);
-					System.out.println("Energy received in the house: " + energy.getEnergy());
-					// Maybe add the energy in later iterations, not just instantiate it
-					this.en = energy;
-					this.consumed += energy.getEnergy();
-					holdIn("active", time);
+				if (messageOnPort(x, "inFromLU", i)) {
+					energyReceived = (Energy) x.getValOnPort("in", i);
+					consumed += energyReceived.getEnergy();
+					System.out.println("House has consumed: " + consumed + "W");
+					energyReceived.setEnergy(0);
+					holdIn("requesting", INC_TIME);
 				}
 			}
-		System.out.println("So far, the house has consumed " + consumed + " energies");
-		System.out.println("external-Phase after: " + phase);
+		}
 	}
 
 	public message out() {
 		message m = new message();
-
-		if (phaseIs("active")) {
-			m.add(makeContent("out", new entity("Hello, I am Adrian and I have just moved out and consumed " + consumed)));
+		if (phaseIs("requesting")) {
+			m.add(makeContent("outToLU", energyRequested));
+		}
+		if (phaseIs("receiving")) {
+			m.add(makeContent("outToEXPF", getDeltEnergy()));
 		}
 		return m;
+	}
+
+	private Energy getDeltEnergy() {
+		double balance = this.energyReceived.getEnergy() - this.energyRequested.getEnergy();
+		return new Energy(balance);
 	}
 
 	public void deltcon(double e, message x) {
@@ -71,7 +83,6 @@ public class House extends ViewableAtomic {
 
 	public void showState() {
 		super.showState();
-		// System.out.println("job: " + job.getName());
 	}
 
 	public String getTooltipText() {
