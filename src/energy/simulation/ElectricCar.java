@@ -5,9 +5,8 @@ import view.modeling.ViewableAtomic;
 
 /*This class will simulate Tesla Model S P100D*/
 public class ElectricCar extends ViewableAtomic {
-	private final double BATTERY_CAPACITY = 100000; // Watts
+	private final double BATTERY_CAPACITY = 100000; //Wh
 	private double currentCapacity;
-	private final double MAX_INPUT = 17300; // Watts
 	private Energy energyReceived;
 	private Energy energyExtra;
 
@@ -48,31 +47,37 @@ public class ElectricCar extends ViewableAtomic {
 
 		energyExtra.setEnergy(0);
 
-		if (phaseIs("charging")) {
-			for (int i = 0; i < x.getLength(); i++) {
-				if (messageOnPort(x, "inFromLU", i)) {
-					energyReceived = (Energy) x.getValOnPort("inFromLU", i);
-					charge(energyReceived.getEnergy());
-					energyReceived.setEnergy(0);
+		if (carIsHome()) {
+			if (time % 24 == 16) {
+				carReturns();
+			}
 
-					if (charged()) {
-						holdIn("idle", INC_TIME);
-					} else {
-						holdIn("charging", INC_TIME);
+			if (phaseIs("charging")) {
+				for (int i = 0; i < x.getLength(); i++) {
+					if (messageOnPort(x, "inFromLU", i)) {
+						energyReceived = (Energy) x.getValOnPort("inFromLU", i);
+						charge(energyReceived.getEnergy());
+						energyReceived.setEnergy(0);
+
+						if (charged()) {
+							holdIn("idle", INC_TIME);
+						} else {
+							holdIn("charging", INC_TIME);
+						}
 					}
 				}
 			}
-		}
-		if (phaseIs("idle")) {
-			if (charged()) {
-				for (int i = 0; i < x.getLength(); i++) {
-					if (messageOnPort(x, "inFromLU", i)) {
-						energyExtra = (Energy) x.getValOnPort("inFromLU", i);
+			if (phaseIs("idle")) {
+				if (charged()) {
+					for (int i = 0; i < x.getLength(); i++) {
+						if (messageOnPort(x, "inFromLU", i)) {
+							energyExtra = (Energy) x.getValOnPort("inFromLU", i);
+						}
 					}
+					holdIn("idle", INC_TIME);
+				} else {
+					holdIn("charging", INC_TIME);
 				}
-				holdIn("idle", INC_TIME);
-			} else {
-				holdIn("charging", INC_TIME);
 			}
 		}
 	}
@@ -103,6 +108,14 @@ public class ElectricCar extends ViewableAtomic {
 
 	private boolean charged() {
 		return this.BATTERY_CAPACITY == this.currentCapacity;
+	}
+
+	private void carReturns() {
+		this.currentCapacity = 0;
+	}
+
+	private boolean carIsHome() {
+		return (time % 24 <= 7) && (time % 24 >= 16);
 	}
 
 	private void charge(double energyReceived) {
