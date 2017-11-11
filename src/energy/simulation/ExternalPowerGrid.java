@@ -17,6 +17,7 @@ public class ExternalPowerGrid extends ViewableAtomic{
 	public ExternalPowerGrid(String name) {
 		super(name);
 		addInport("inFromLU");
+		addOutport("outToTrancducer");
 
 		this.time = 0;
 		initialize();
@@ -54,6 +55,8 @@ public class ExternalPowerGrid extends ViewableAtomic{
 
 	public message out() {
 		message m = new message();
+		
+		m.add(makeContent("outToTrancducer", excess));
 		/*
 		if(phaseIs("TAKING")){
 			m.add(makeContent("outToTrancducer", excess));
