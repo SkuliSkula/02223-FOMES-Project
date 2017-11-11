@@ -111,7 +111,7 @@ public class ElectricCar extends ViewableAtomic {
 	}
 
 	private void carReturns() {
-		this.currentCapacity = 0;
+		this.currentCapacity = currentCapacity/2;
 	}
 
 	private boolean carIsHome() {
