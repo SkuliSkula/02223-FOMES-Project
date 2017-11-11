@@ -7,13 +7,9 @@ import view.modeling.ViewableAtomic;
 public class PhotoVoltaicPanel extends ViewableAtomic { 
 	protected double time;
 	protected int generated;
-	protected entity ent;
+	protected doubleEnt ent;
 	protected int genVal;
 	protected double incrementTime;
-	private Year year;
-	private int timeCycle;
-	private int monthCounter;
-	private int dayCounter;
 	public PhotoVoltaicPanel(String name, double time, double incrementTime) {
 		super(name);
 		addInport("inFromEXPF");
@@ -29,10 +25,6 @@ public class PhotoVoltaicPanel extends ViewableAtomic {
 		holdIn("idle", 0);
 		generated = 0;
 		genVal = 345;
-		timeCycle = 0;
-		year = new Year();
-		monthCounter = 0;
-		dayCounter = 1;
 		super.initialize();
 	}
 	// external function like input
@@ -43,25 +35,9 @@ public class PhotoVoltaicPanel extends ViewableAtomic {
 		Continue(e);
 		for (int i = 0; i < x.getLength(); i++) {
 			if (messageOnPort(x, "inFromEXPF", i)) {
-				ent = x.getValOnPort("SolIn", i);
-				
-				timeCycle = (int)time % 24;
-				
-				if(timeCycle == 23)
-					dayCounter++;
-				
-				int monthLength = year.getMonths().get(monthCounter).getLength();
-				if(dayCounter == monthLength)
-					monthCounter++;
+				ent = (doubleEnt) x.getValOnPort("SolIn", i);
+				generated = (int)(genVal * ent.getv());
 
-				double genValMultiplier = year.getMonths().get(monthCounter).getDayArray()[timeCycle];
-				generated = (int)(generated * genValMultiplier);
-				
-				System.out.println("Day: " + dayCounter);
-				System.out.println("Month: " + monthCounter);
-				System.out.println("Generated: " + generated);
-				
-				holdIn("active", time);
 			}
 			else if(messageOnPort(x, "outFromEXPF", i)) {
 				holdIn("idle", 0);
@@ -82,8 +58,7 @@ public class PhotoVoltaicPanel extends ViewableAtomic {
 	public message out() {
 		message m = new message();
 
-		m.add(makeContent("outToLU", new Energy(generated * genVal)));
-		generated = 345; // reset the generated value
+		m.add(makeContent("outToLU", new Energy(generated)));
 		return m;
 	}
 }
