@@ -17,13 +17,14 @@ public class Generator extends ViewableAtomic{
 		
 		addInport("start");
 		addOutport("outFromEXPF");
+		addInport("stop");
 		
 		initialize();
 	}
 	
 	public void initialize() {
 		holdIn("active", INFINITY);
-		sigma = INFINITY;
+		sigma = 1;
 		timeCycle = 0;
 		year = new Year();
 		monthCounter = 0;
@@ -33,6 +34,10 @@ public class Generator extends ViewableAtomic{
 	}
 	
 	public void deltint(double e, message x) {
+		
+	}
+
+	public void deltext(double e, message x) {
 		
 		for(int i = 0; i < x.getLength(); i++) {
 			if(messageOnPort(x, "start", i)) {
@@ -55,12 +60,10 @@ public class Generator extends ViewableAtomic{
 				
 				holdIn("active", hour);
 			}
+			else if(messageOnPort(x, "stop", i)) {
+				holdIn("idle", INFINITY);
+			}
 		}
-		
-	}
-
-	public void deltext(double e, message x) {
-		
 	}
 
 	public message out() {
