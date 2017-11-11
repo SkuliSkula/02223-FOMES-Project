@@ -11,7 +11,6 @@ public class Trancducer extends ViewableAtomic {
 	private ArrayList<Double> extraEnergy;
 	protected double clock, total_ta, observation_time;
 	private int counter;
-	public Double count = 0.00;
 
 	public Trancducer(String name, double Observation_time) {
 		super(name);
@@ -29,7 +28,7 @@ public class Trancducer extends ViewableAtomic {
 
 	public void initialize() {
 		phase = "active";
-		sigma = observation_time;
+		sigma = INFINITY;
 		clock = 0;
 		counter = 0;
 		super.initialize();
