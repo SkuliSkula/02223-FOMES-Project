@@ -9,17 +9,12 @@ public class PhotoVoltaicPanel extends ViewableAtomic {
 	protected int generated;
 	protected doubleEnt ent;
 	protected int genVal;
-	protected double incrementTime;
-	private final int INC_TIME = 1;
 
 	public PhotoVoltaicPanel(String name, double incrementTime) {
 		super(name);
 		addInport("inFromEXPF");
 		addOutport("outToLU");
-
 		this.time = 0;
-		this.incrementTime = incrementTime;
-
 		initialize();
 	}
 
@@ -28,7 +23,6 @@ public class PhotoVoltaicPanel extends ViewableAtomic {
 		System.out.println("2. PV panel, initialized with sigma = " + sigma);
 		generated = 0;
 		genVal = 345;
-		//sigma = 1;
 		super.initialize();
 	}
 
@@ -46,21 +40,20 @@ public class PhotoVoltaicPanel extends ViewableAtomic {
 				generated = (int) (genVal * ent.getv());
 				System.out.println("PV panel Generated energy: " + generated);
 				holdIn("active", 1);
-				time++;
 			}
 		}
 	}
 
 	// internal function like time
-	public void deltint(double e, message x) {
+	/*public void deltint(double e, message x) {
 		System.out.println("2. PV panel internal ");
 		System.out.println("Incrementing time in deltInt PVPanel!");
 		time++;
-		if (phaseIs("active")){
+		if (phaseIs("active")) {
 			time++;
 			holdIn("active", 1);
 		}
-	}
+	}*/
 
 	// If deltint and deltext happen at the same time this function decides the
 	// priority
@@ -72,7 +65,9 @@ public class PhotoVoltaicPanel extends ViewableAtomic {
 	public message out() {
 		message m = new message();
 		System.out.println("2. Pv panel out() message with sigma = " + sigma + ", energy generated " + generated);
-		m.add(makeContent("outToLU", new Energy(generated)));
+		m.add(makeContent("outToLU", new Energy(generated, time)));
+		System.out.println("2. Pv panel out() sending: " + generated+ " at time " + time);
+		time++;
 		return m;
 	}
 }

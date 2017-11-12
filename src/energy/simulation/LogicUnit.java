@@ -12,42 +12,43 @@ public class LogicUnit extends ViewableAtomic {
 	public LogicUnit(String name) {
 		super(name);
 		addInport("inFromPVPanel");
-		//addInport("inFromHouse"); // Request energy
+		// addInport("inFromHouse"); // Request energy
 		addInport("inExtraFromBattery"); // Excesive flow of energy from the
 											// battery
-		//addInport("inFromBattery"); // Energy back after request
+		// addInport("inFromBattery"); // Energy back after request
 		addInport("inExtraFromEV"); // Excesive energy from the Electric vehicle
 
-		//addOutport("outToHouse");
+		// addOutport("outToHouse");
 		addOutport("outToBattery");
 		addOutport("outToEG");
-		//addOutport("outRequestEnergy"); // House or electric car can request
-										// energy
+		// addOutport("outRequestEnergy"); // House or electric car can request
+		// energy
 		addOutport("outToEV"); // EV = Electric vehicle
-
-		
 
 		initialize();
 	}
 
 	public void initialize() {
 		holdIn("idle", 1);
-		System.out.println("3. initialized with sigma = " + sigma);
+		System.out.println("3. LU initialized with sigma = " + sigma);
 		this.time = 0;
 		super.initialize();
 	}
 
 	public void deltext(double e, message x) {
 		Continue(e);
-		System.out.println("3. ################# external sigma = " + sigma + ", and elapsed time = " + e);
+		System.out.println("3. ################# Logic Unit external sigma = " + sigma + ", and elapsed time = " + e);
 		for (int i = 0; i < x.getLength(); i++) {
 			System.out.println("in loop");
 			if (messageOnPort(x, "inFromPVPanel", i)) {
-				System.out.println("3. found message from pv panel on port");
+				System.out.println("3. Logic Unit found message from pv panel on port");
 				Energy receivedEnergy = (Energy) x.getValOnPort("inFromPVPanel", i);
 				System.out.println("3. Logic unit - receiving energy: " + receivedEnergy.getEnergy());
 				this.energyToBattery = receivedEnergy;
 				holdIn("active", 1);
+				System.out.println("Old time in LU:" + time);
+				time = receivedEnergy.getTime();
+				System.out.println("New time in LU from PV:" + time);
 			} else if (messageOnPort(x, "inExtraFromBattery", i)) {
 				Energy receivedEnergy = (Energy) x.getValOnPort("inExtraFromBattery", i);
 				System.out
@@ -56,41 +57,40 @@ public class LogicUnit extends ViewableAtomic {
 					this.energyToGrid = receivedEnergy;
 				} else {
 					if (receivedEnergy.getEnergy() > EV_OUTPUT) {
-						this.energyToEV = new Energy(EV_OUTPUT);
-						this.energyToGrid = new Energy(receivedEnergy.getEnergy() - EV_OUTPUT);
+						this.energyToEV = new Energy(EV_OUTPUT, receivedEnergy.getTime()); // Time added
+						this.energyToGrid = new Energy(receivedEnergy.getEnergy() - EV_OUTPUT,
+								receivedEnergy.getTime());// Time added
 					} else {
 						this.energyToEV = receivedEnergy;
 					}
 				}
 				holdIn("active", 1);
-			}  else if (messageOnPort(x, "inExtraFromEV", i)) {
+			} else if (messageOnPort(x, "inExtraFromEV", i)) {
 				Energy receivedEnergy = (Energy) x.getValOnPort("inExtraFromEV", i);
 				System.out.println("Logic unit - receiving overflow energy from EV: " + receivedEnergy.getEnergy());
 				this.energyToGrid = receivedEnergy;
 				holdIn("active", INC_TIME);
-			} /*else if (messageOnPort(x, "inFromHouse", i)) {
-				Energy receivedEnergy = (Energy) x.getValOnPort("inFromHouse", i);
-				System.out.println("Logic unit - receiving energy request from house: " + receivedEnergy.getEnergy());
-				this.energyToRequest = receivedEnergy;
-				holdIn("active", time);
-			}else if (messageOnPort(x, "inFromBattery", i)) {
-				Energy receivedEnergy = (Energy) x.getValOnPort("inFromBattery", i);
-				System.out.println("Logic unit - receiving overflow energy from EV: " + receivedEnergy.getEnergy());
-				this.energyToHouse = receivedEnergy;
-				holdIn("active", time);
-			}*/
+			} /*
+				 * else if (messageOnPort(x, "inFromHouse", i)) { Energy receivedEnergy =
+				 * (Energy) x.getValOnPort("inFromHouse", i);
+				 * System.out.println("Logic unit - receiving energy request from house: " +
+				 * receivedEnergy.getEnergy()); this.energyToRequest = receivedEnergy;
+				 * holdIn("active", time); }else if (messageOnPort(x, "inFromBattery", i)) {
+				 * Energy receivedEnergy = (Energy) x.getValOnPort("inFromBattery", i);
+				 * System.out.println("Logic unit - receiving overflow energy from EV: " +
+				 * receivedEnergy.getEnergy()); this.energyToHouse = receivedEnergy;
+				 * holdIn("active", time); }
+				 */
 		}
 
 		System.out.println("3. external-Phase after: " + phase);
 	}
 
-		public void deltint(double e, message x) {
-			System.out.println("3. internal");
-			if (phaseIs("active")){
-				time++;
-				holdIn("active", 1);
-			}
-		}
+	/*
+	 * public void deltint(double e, message x) {
+	 * System.out.println("3. Logic Unit internal"); if (phaseIs("active")) {
+	 * time++; holdIn("active", 1); } }
+	 */
 
 	public void deltcon(double e, message x) {
 		deltint();
@@ -124,8 +124,12 @@ public class LogicUnit extends ViewableAtomic {
 				energyToGrid = null;
 			}
 			System.out.println("Logic unit message out(): inside active ");
-
+			System.out.println("Logic unit current time active: " + time);
+		} else {
+			System.out.println("Logic unit message out(): not active ");
+			System.out.println("Logic unit current time not active: " + time);
 		}
+
 		return m;
 	}
 
