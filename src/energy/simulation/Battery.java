@@ -7,7 +7,7 @@ import view.modeling.ViewableAtomic;
 public class Battery extends ViewableAtomic { // ViewableAtomic is used instead
 												// of atomic due to its
 												// graphics capability
-	private final static double BATTERY_CAPACITY = 10;// 13500;
+	private final static double BATTERY_CAPACITY = 13500;
 	private final static double MIN_PERCENT = 25, MAX_PERCENT = 85;
 	protected static final double INC_TIME = 1;
 	private double availableStorage;
@@ -41,10 +41,10 @@ public class Battery extends ViewableAtomic { // ViewableAtomic is used instead
 		addOutport("outToLU"); // Send the requested energy
 
 		/*
-		 * addTestInput("inFromLU", new Energy(5000)); addTestInput("inFromLU",
-		 * new Energy(7000)); addTestInput("inFromLU", new Energy(8000));
-		 * addTestInput("inFromLU", new Energy(14000)); addTestInput("inFromLU",
-		 * new Energy(3000)); addTestInput("inFromLU", new Energy(1000));
+		 * addTestInput("inFromLU", new Energy(5000)); addTestInput("inFromLU", new
+		 * Energy(7000)); addTestInput("inFromLU", new Energy(8000));
+		 * addTestInput("inFromLU", new Energy(14000)); addTestInput("inFromLU", new
+		 * Energy(3000)); addTestInput("inFromLU", new Energy(1000));
 		 * addTestInput("inFromLURequest", new Energy(1000));
 		 * addTestInput("inFromLURequest", new Energy(5000));
 		 * addTestInput("inFromLURequest", new Energy(6000));
@@ -54,8 +54,8 @@ public class Battery extends ViewableAtomic { // ViewableAtomic is used instead
 		 * addTestInput("inFromLURequest", new Energy(5000));
 		 */
 	}
-	
-	public Battery(String name, int noOfBatteries, double stateOfCharge){
+
+	public Battery(String name, int noOfBatteries, double stateOfCharge) {
 		this(name, noOfBatteries);
 		this.stateOfCharge = stateOfCharge;
 	}
@@ -107,7 +107,7 @@ public class Battery extends ViewableAtomic { // ViewableAtomic is used instead
 				} else {
 					if (stateOfCharge != 0)
 						outputEnergy = new Energy(stateOfCharge, reqEnergy.getTime());
-					else{
+					else {
 						outputEnergy = new Energy(0, reqEnergy.getTime());
 					}
 					stateOfCharge = 0;
@@ -159,16 +159,18 @@ public class Battery extends ViewableAtomic { // ViewableAtomic is used instead
 		if (phaseIs("charging")) {
 			if (excessEnergy != null) {
 				m.add(makeContent("outExtraToLU", excessEnergy));
-				System.out.println("________________________ Energy to be sent to the overflow: " + excessEnergy.getEnergy() + ", at time: " + excessEnergy.getTime());
+				System.out.println("________________________ Energy to be sent to the overflow: "
+						+ excessEnergy.getEnergy() + ", at time: " + excessEnergy.getTime());
 				excessEnergy = null;
 			}
 		} else if (phaseIs("discharging")) {
-				System.out.println("$$$$$$$$$$$$$$ Discharging " + outputEnergy.getEnergy() + "W");
-				m.add(makeContent("outToLU", outputEnergy));
-				outputEnergy = null;
+			System.out.println("$$$$$$$$$$$$$$ Discharging " + outputEnergy.getEnergy() + "W");
+			m.add(makeContent("outToLU", outputEnergy));
+			outputEnergy = null;
 		} else if (phaseIs("djarging")) {
 			if (excessEnergy != null) {
-				System.out.println("________________________ Energy to be sent to the overflow: " + excessEnergy.getEnergy() + ", at time: " + excessEnergy.getTime());
+				System.out.println("________________________ Energy to be sent to the overflow: "
+						+ excessEnergy.getEnergy() + ", at time: " + excessEnergy.getTime());
 				m.add(makeContent("outExtraToLU", excessEnergy));
 				excessEnergy = null;
 			}

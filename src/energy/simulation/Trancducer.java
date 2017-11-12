@@ -114,18 +114,20 @@ public class Trancducer extends ViewableAtomic {
 			int timeCycle = time % 24;
 
 			if (timeCycle == 23) {
-				//dayCounter++;
+				// dayCounter++;
 				monthCounter++;
 			}
 
-			/*int monthLength = year.getMonths().get(monthCounter).getLength();
-			if (dayCounter == monthLength) {
-				// writeData(year.getMonths().get(monthCounter).getDayArray()); // Write data
-				// per month, send days in month
-				monthCounter++;
-			}*/
+			/*
+			 * int monthLength = year.getMonths().get(monthCounter).getLength(); if
+			 * (dayCounter == monthLength) { //
+			 * writeData(year.getMonths().get(monthCounter).getDayArray()); // Write data //
+			 * per month, send days in month monthCounter++; }
+			 */
 
 			year.getMonths().get(monthCounter).getDayArray()[timeCycle] = gridEnergy.getEnergy();
+			System.out.println(
+					"Stored in hour: " + timeCycle + ", month: " + monthCounter + ", value: " + gridEnergy.getEnergy());
 			System.out.println("*****************Trancducer, received energy: " + gridEnergy.getEnergy());
 
 			System.out.println("Day: " + dayCounter + " saved");
