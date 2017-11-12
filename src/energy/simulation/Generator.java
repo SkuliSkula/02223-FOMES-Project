@@ -18,7 +18,7 @@ public class Generator extends ViewableAtomic {
 
 		addInport("start");
 		addOutport("outFromEXPF");
-		// addInport("stop");
+		addInport("stop");
 
 		initialize();
 	}
