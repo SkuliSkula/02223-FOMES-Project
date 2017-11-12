@@ -10,9 +10,11 @@ public class ElectricCar extends ViewableAtomic {
 	protected Energy energyReceived;
 	protected Energy energyExtra;
 	private boolean takenOut;
+	private int time;
+	private double totalReceived;
+	private double totalExtraReceived;
 
 	private final double INC_TIME = 1;
-	private double time;
 
 	public ElectricCar() {
 		this("Tesla Model s");
@@ -30,11 +32,12 @@ public class ElectricCar extends ViewableAtomic {
 	public void initialize() {
 		holdIn("idle", INC_TIME);
 		System.out.println("5. initialized with sigma = " + sigma);
-		time = 0;
 		currentCapacity = 0;
 		energyReceived = new Energy();
 		energyExtra = new Energy();
 		takenOut = false;
+		time = 7;
+		totalReceived = 0;
 		super.initialize();
 	}
 
@@ -47,7 +50,6 @@ public class ElectricCar extends ViewableAtomic {
 			holdIn("idle", INC_TIME);
 		}
 
-		time += INC_TIME;
 		if (!carIsHome()) {
 			takenOut = true;
 		}
@@ -57,21 +59,34 @@ public class ElectricCar extends ViewableAtomic {
 		Continue(e);
 
 		energyExtra.setEnergy(0);
-		System.out.println("5. ################# external sigma = " + sigma + ", and elapsed time = " + e + " in phase: " + phase);
-		//if (carIsHome()) {
-			System.out.println("5. car is home");
-			if (time % 24 > 16 && takenOut) {
-				carReturns();
-				takenOut = false;
+		System.out.println(
+				"5. ################# external sigma = " + sigma + ", and elapsed time = " + e + " in phase: " + phase);
+
+		if (phaseIs("idle")) {
+			for (int i = 0; i < x.getLength(); i++) {
+				if (messageOnPort(x, "inFromLU1", i)) {
+					energyReceived = (Energy) x.getValOnPort("inFromLU1", i);
+					totalReceived += energyReceived.getEnergy();
+					time = (int) energyReceived.getTime();
+					System.out.println("The time in the EV is: " + time % 24);
+				}
 			}
+		}
+
+		if (carIsHome())
+			System.out.println("******* THE CAR IS HOME ********");
+		else
+			System.out.println("******* THE CAR IS NOT HOME ********");
+
+		if (carIsHome()) {
 			if (phaseIs("charging")) {
 				for (int i = 0; i < x.getLength(); i++) {
 					if (messageOnPort(x, "inFromLU1", i)) {
 						energyReceived = (Energy) x.getValOnPort("inFromLU1", i);
-						System.out.println("received energy: " + energyExtra.getEnergy());
+						time = (int) energyReceived.getTime();
+						totalReceived += energyReceived.getEnergy();
 						charge(energyReceived.getEnergy());
 						energyReceived.setEnergy(0);
-
 						if (charged()) {
 							holdIn("idle", INC_TIME);
 						} else {
@@ -84,6 +99,8 @@ public class ElectricCar extends ViewableAtomic {
 					for (int i = 0; i < x.getLength(); i++) {
 						if (messageOnPort(x, "inFromLU1", i)) {
 							energyExtra = (Energy) x.getValOnPort("inFromLU1", i);
+							totalExtraReceived += energyExtra.getEnergy();
+							time = (int) energyReceived.getTime();
 						}
 					}
 					holdIn("idle", INC_TIME);
@@ -91,6 +108,8 @@ public class ElectricCar extends ViewableAtomic {
 					for (int i = 0; i < x.getLength(); i++) {
 						if (messageOnPort(x, "inFromLU1", i)) {
 							energyReceived = (Energy) x.getValOnPort("inFromLU1", i);
+							time = (int) energyReceived.getTime();
+							totalReceived += energyReceived.getEnergy();
 							charge(energyReceived.getEnergy());
 							energyReceived.setEnergy(0);
 						}
@@ -98,13 +117,11 @@ public class ElectricCar extends ViewableAtomic {
 					holdIn("charging", INC_TIME);
 				}
 			}
-		//}
+		}
 	}
 
 	public message out() {
 		message m = new message();
-		System.out.println("5. out() message");
-		System.out.println("5. " + energyExtra.getEnergy());
 		if (phaseIs("idle")) {
 			if (energyExtra.getEnergy() != 0) {
 				m.add(makeContent("carOverflow", energyExtra));
@@ -123,7 +140,9 @@ public class ElectricCar extends ViewableAtomic {
 	}
 
 	public String getTooltipText() {
-		return super.getTooltipText();
+		return super.getTooltipText() + "\n EV time: " + (time % 24) + "\n Car home: " + carIsHome()
+				+ "\n Total energy received: " + totalReceived + "\n Total Extra energy received: " + totalExtraReceived
+				+ "\n Received time: " + time;
 	}
 
 	private boolean charged() {
@@ -135,7 +154,7 @@ public class ElectricCar extends ViewableAtomic {
 	}
 
 	private boolean carIsHome() {
-		return (time % 24 <= 7) && (time % 24 >= 16);
+		return (time % 24 <= 7) || (time % 24 >= 16);
 	}
 
 	private void charge(double energyReceived) {
