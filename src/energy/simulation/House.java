@@ -48,7 +48,7 @@ public class House extends ViewableAtomic {
 				if (messageOnPort(x, "inFromLU", i)) {
 					Energy en = (Energy) x.getValOnPort("inFromLU", i);
 					energyRequested = CONSUMPTION_WH[(int) en.getTime() % 24];
-					deltaEnergy = new Energy(energyRequested - en.getEnergy(), en.getTime());
+					deltaEnergy = new Energy(en.getEnergy() - energyRequested, en.getTime());
 					consumed += en.getEnergy();
 					System.out.println("House has consumed: " + consumed + "W from the battery since the start of the program!");
 					holdIn("receiving", INC_TIME);

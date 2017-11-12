@@ -154,7 +154,7 @@ public class Battery extends ViewableAtomic { // ViewableAtomic is used instead
 		if (phaseIs("charging")) {
 			if (excessEnergy != null) {
 				m.add(makeContent("outExtraToLU", excessEnergy));
-				System.out.println("Sending extra energy out of here " + excessEnergy.getEnergy());
+				System.out.println("________________________ Energy to be sent to the overflow: " + excessEnergy.getEnergy() + ", at time: " + excessEnergy.getTime());
 				excessEnergy = null;
 			}
 		} else if (phaseIs("discharging")) {
@@ -163,6 +163,7 @@ public class Battery extends ViewableAtomic { // ViewableAtomic is used instead
 				outputEnergy = null;
 		} else if (phaseIs("djarging")) {
 			if (excessEnergy != null) {
+				System.out.println("________________________ Energy to be sent to the overflow: " + excessEnergy.getEnergy() + ", at time: " + excessEnergy.getTime());
 				m.add(makeContent("outExtraToLU", excessEnergy));
 				excessEnergy = null;
 			}

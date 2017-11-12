@@ -35,4 +35,8 @@ public class Energy extends entity {
 	public void setTime(double time) {
 		this.time = time;
 	}
+	
+	public String getName(){
+	     return Double.toString(energy);
+	}
 }

@@ -115,6 +115,7 @@ public class LogicUnit extends ViewableAtomic {
 				energyToRequest = null;
 			}
 			if (energyToEV != null) {
+				System.out.println("________________________ Energy to be sent to the car: " + energyToEV.getEnergy() + ", at time: " + energyToEV.getTime());
 				m.add(makeContent("outToEV", energyToEV));
 				energyToEV = null;
 			}
