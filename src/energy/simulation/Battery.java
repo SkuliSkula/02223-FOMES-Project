@@ -54,6 +54,11 @@ public class Battery extends ViewableAtomic { // ViewableAtomic is used instead
 		 * addTestInput("inFromLURequest", new Energy(5000));
 		 */
 	}
+	
+	public Battery(String name, int noOfBatteries, double stateOfCharge){
+		this(name, noOfBatteries);
+		this.stateOfCharge = stateOfCharge;
+	}
 
 	public void initialize() {
 		holdIn("idle", 1);
