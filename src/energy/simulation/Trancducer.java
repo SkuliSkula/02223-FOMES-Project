@@ -12,13 +12,14 @@ public class Trancducer extends ViewableAtomic {
 	private Year houseUsage;
 	private Year extraEnergyGrid;
 
+	private int localTime;
 	private int monthCounter;
 	private int dayCounter;
-	private final int HOURS_IN_YEAR = 8760;
+	private final int HOURS_IN_YEAR = 100; // One day per month (12*24)
 	private boolean yearDone;
 
-	private static final char ELEMENT_SEPARATOR = ',';
-	private static final char LINE_SEPARATOR = '\n';
+	private static final String ELEMENT_SEPARATOR = ",";
+	private static final String LINE_SEPARATOR = "\n";
 
 	/*
 	 * private final String[] fileName =
@@ -28,7 +29,7 @@ public class Trancducer extends ViewableAtomic {
 
 	protected double clock;
 
-	public Trancducer(String name, double Observation_time) {
+	public Trancducer(String name) {
 		super(name);
 		addInport("inFromHouse");
 		addInport("inFromGrid");
@@ -38,7 +39,7 @@ public class Trancducer extends ViewableAtomic {
 	}
 
 	public Trancducer() {
-		this("Trancducer", 2000);
+		this("Trancducer");
 	}
 
 	public void initialize() {
@@ -47,9 +48,12 @@ public class Trancducer extends ViewableAtomic {
 		monthCounter = 0;
 		dayCounter = 1;
 		yearDone = false;
+		localTime = 0;
 
 		houseUsage = new Year();
 		extraEnergyGrid = new Year();
+		houseUsage.setToZero();
+		extraEnergyGrid.setToZero();
 
 		super.initialize();
 		holdIn("active", INFINITY);
@@ -67,10 +71,14 @@ public class Trancducer extends ViewableAtomic {
 		for (int i = 0; i < x.size(); i++) {
 			if (messageOnPort(x, "inFromHouse", i)) {
 				Energy houseEnergy = ((Energy) x.getValOnPort("inFromHouse", i));
+				System.out.println("Trancducer - got energy from HOUSE: " + houseEnergy.getEnergy() + ", time: "
+						+ houseEnergy.getTime());
 				storeDataStatistics(houseEnergy, houseUsage);
 			}
 			if (messageOnPort(x, "inFromGrid", i)) {
 				Energy gridEnergy = ((Energy) x.getValOnPort("inFromGrid", i));
+				System.out.println("Trancducer - got energy from GRID: " + gridEnergy.getEnergy() + ", time: "
+						+ gridEnergy.getTime());
 				storeDataStatistics(gridEnergy, extraEnergyGrid);
 			}
 		}
@@ -106,18 +114,19 @@ public class Trancducer extends ViewableAtomic {
 			int timeCycle = time % 24;
 
 			if (timeCycle == 23) {
-				dayCounter++;
+				//dayCounter++;
+				monthCounter++;
 			}
 
-			int monthLength = year.getMonths().get(monthCounter).getLength();
+			/*int monthLength = year.getMonths().get(monthCounter).getLength();
 			if (dayCounter == monthLength) {
 				// writeData(year.getMonths().get(monthCounter).getDayArray()); // Write data
 				// per month, send days in month
 				monthCounter++;
-			}
+			}*/
 
-			// Replacing sunlight hours with energy statistics data
 			year.getMonths().get(monthCounter).getDayArray()[timeCycle] = gridEnergy.getEnergy();
+			System.out.println("*****************Trancducer, received energy: " + gridEnergy.getEnergy());
 
 			System.out.println("Day: " + dayCounter + " saved");
 			System.out.println("Month: " + monthCounter + " saved");
@@ -133,22 +142,21 @@ public class Trancducer extends ViewableAtomic {
 			PrintWriter pw = new PrintWriter(new File(fileToWrite));
 			StringBuilder sb = new StringBuilder();
 
-			sb.append(appendHeader());
+			pw.append(appendHeader());
 
 			// Loop through months
 			for (int i = 0; i < houseUsage.getMonths().size(); i++) {
 				String currentMonth = houseUsage.getMonths().get(i).getMonthName();
 				// Loop through hours
 				for (int j = 0; j < 24; j++) {
-					sb.append(appendMonthAndTime(currentMonth, j));
-					sb.append(houseUsage.getMonths().get(i).getDayArray()[j] + ELEMENT_SEPARATOR
-							+ extraEnergyGrid.getMonths().get(i).getDayArray()[j] + LINE_SEPARATOR);
+					String data = houseUsage.getMonths().get(i).getDayArray()[j] + ELEMENT_SEPARATOR
+							+ extraEnergyGrid.getMonths().get(i).getDayArray()[j];
+					pw.append(appendMonthTimeData(currentMonth, j, data));
 				}
 			}
 			pw.write(sb.toString());
-			pw.flush();
 			pw.close();
-
+			System.out.println("Done writing!");
 		} catch (FileNotFoundException e) {
 			e.printStackTrace();
 		}
@@ -158,7 +166,7 @@ public class Trancducer extends ViewableAtomic {
 		return "Period" + ELEMENT_SEPARATOR + "House" + ELEMENT_SEPARATOR + "Grid" + LINE_SEPARATOR;
 	}
 
-	private String appendMonthAndTime(String month, int hour) {
-		return month + "_Hour" + hour + ELEMENT_SEPARATOR;
+	private String appendMonthTimeData(String month, int hour, String data) {
+		return month + "_Hour" + hour + ELEMENT_SEPARATOR + data + LINE_SEPARATOR;
 	}
 }

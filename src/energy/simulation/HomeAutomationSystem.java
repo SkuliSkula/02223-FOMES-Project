@@ -11,7 +11,7 @@ public class HomeAutomationSystem extends ViewableDigraph {
 
 	private double time;
 	private double incrementTime;
-	
+
 	public HomeAutomationSystem(String name) {
 		super(name);
 		homeAutomationConstruct();
@@ -25,12 +25,13 @@ public class HomeAutomationSystem extends ViewableDigraph {
 	private void homeAutomationConstruct() {
 
 		addInport("in");
-		addOutport("outOfThisFuckingSimulation");
+		addOutport("outOfSimulation");
 
 		this.time = 1;
 		this.incrementTime = 1;
-		
+
 		ViewableAtomic generator = new Generator();
+		ViewableAtomic trancuder = new Trancducer();
 		ViewableAtomic pv = new PhotoVoltaicPanel("Penis", 1);
 		ViewableAtomic lu = new LogicUnit("Other penis");
 		ViewableAtomic bat = new Battery();
@@ -39,6 +40,7 @@ public class HomeAutomationSystem extends ViewableDigraph {
 		ViewableAtomic house = new House("Ma' crib");
 
 		add(generator);
+		add(trancuder);
 		add(pv);
 		add(lu);
 		add(bat);
@@ -56,16 +58,18 @@ public class HomeAutomationSystem extends ViewableDigraph {
 		addCoupling(lu, "outToEV", car, "inFromLU1");
 		addCoupling(car, "carOverflow", lu, "inExtraFromEV");
 		addCoupling(lu, "outToEG", grid, "inFromLU");
-		
+
 		addCoupling(lu, "outRequestEnergy", bat, "inFromLURequest");
 		addCoupling(bat, "outToLU", lu, "inFromBattery");
 		addCoupling(lu, "outToHouse", house, "inFromLU");
-		addCoupling(house, "outToEXPF", this, "outOfThisFuckingSimulation");
-		addCoupling(grid, "outToTrancducer", this, "outOfThisFuckingSimulation");
-		
-		addTestInput("in", new Energy());
-		addTestInput("in", new Energy());
-		addTestInput("in", new Energy());
+		addCoupling(house, "outToEXPF", trancuder, "inFromHouse");
+		addCoupling(grid, "outToTrancducer", trancuder, "inFromGrid");
+		addCoupling(trancuder, "out", this, "outOfSimulation");
+
+		/*
+		 * addTestInput("in", new Energy()); addTestInput("in", new Energy());
+		 * addTestInput("in", new Energy());
+		 */
 	}
 
     /**
@@ -76,11 +80,12 @@ public class HomeAutomationSystem extends ViewableDigraph {
     {
         preferredSize = new Dimension(805, 332);
         ((ViewableComponent)withName("Generator")).setPreferredLocation(new Point(0, 202));
-        ((ViewableComponent)withName("Penis")).setPreferredLocation(new Point(-37, 31));
-        ((ViewableComponent)withName("Battery")).setPreferredLocation(new Point(340, 37));
-        ((ViewableComponent)withName("External Grid")).setPreferredLocation(new Point(165, 34));
         ((ViewableComponent)withName("Ma' crib")).setPreferredLocation(new Point(146, 253));
         ((ViewableComponent)withName("Other penis")).setPreferredLocation(new Point(114, 121));
+        ((ViewableComponent)withName("External Grid")).setPreferredLocation(new Point(165, 34));
+        ((ViewableComponent)withName("Penis")).setPreferredLocation(new Point(-37, 31));
         ((ViewableComponent)withName("Tesla Model s")).setPreferredLocation(new Point(354, 210));
+        ((ViewableComponent)withName("Battery")).setPreferredLocation(new Point(340, 37));
+        ((ViewableComponent)withName("Trancducer")).setPreferredLocation(new Point(71, 37));
     }
 }
