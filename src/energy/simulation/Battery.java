@@ -7,7 +7,7 @@ import view.modeling.ViewableAtomic;
 public class Battery extends ViewableAtomic { // ViewableAtomic is used instead
 												// of atomic due to its
 												// graphics capability
-	private final static double BATTERY_CAPACITY = 10;//13500;
+	private final static double BATTERY_CAPACITY = 10;// 13500;
 	private final static double MIN_PERCENT = 25, MAX_PERCENT = 85;
 	protected static final double INC_TIME = 1;
 	private double availableStorage;
@@ -29,7 +29,7 @@ public class Battery extends ViewableAtomic { // ViewableAtomic is used instead
 	public Battery(String name, int noOfBatteries) {
 		super(name);
 		this.noOfBatteries = noOfBatteries;
-		this.totalCapacity = this.noOfBatteries * (BATTERY_CAPACITY/100*(MAX_PERCENT - MIN_PERCENT));
+		this.totalCapacity = this.noOfBatteries * (BATTERY_CAPACITY / 100 * (MAX_PERCENT - MIN_PERCENT));
 		this.availableStorage = totalCapacity;
 		this.stateOfCharge = 0;
 		this.excessEnergy = null;
@@ -41,10 +41,10 @@ public class Battery extends ViewableAtomic { // ViewableAtomic is used instead
 		// addOutport("outToLU"); // Send the requested energy
 
 		/*
-		 * addTestInput("inFromLU", new Energy(5000)); addTestInput("inFromLU",
-		 * new Energy(7000)); addTestInput("inFromLU", new Energy(8000));
-		 * addTestInput("inFromLU", new Energy(14000)); addTestInput("inFromLU",
-		 * new Energy(3000)); addTestInput("inFromLU", new Energy(1000));
+		 * addTestInput("inFromLU", new Energy(5000)); addTestInput("inFromLU", new
+		 * Energy(7000)); addTestInput("inFromLU", new Energy(8000));
+		 * addTestInput("inFromLU", new Energy(14000)); addTestInput("inFromLU", new
+		 * Energy(3000)); addTestInput("inFromLU", new Energy(1000));
 		 * addTestInput("inFromLURequest", new Energy(1000));
 		 * addTestInput("inFromLURequest", new Energy(5000));
 		 * addTestInput("inFromLURequest", new Energy(6000));
@@ -80,26 +80,25 @@ public class Battery extends ViewableAtomic { // ViewableAtomic is used instead
 					charging = true;
 					availableStorage -= (noOfBatteries - 1) * 5000;
 					stateOfCharge += (noOfBatteries - 1) * 5000;
-					excessEnergy = new Energy(pvEnergy.getEnergy() - (noOfBatteries - 1) * 5000);
+					excessEnergy = new Energy(pvEnergy.getEnergy() - (noOfBatteries - 1) * 5000, pvEnergy.getTime());// Time
+																														// added
 				} else {
 					if (availableStorage != 0)
 						charging = true;
-					excessEnergy = new Energy(pvEnergy.getEnergy() - availableStorage);
+					excessEnergy = new Energy(pvEnergy.getEnergy() - availableStorage, pvEnergy.getTime());// Time added
 					availableStorage = 0;
 					stateOfCharge = totalCapacity;
 				}
 				System.out.println("4. Current time in battery: " + time);
 				System.out.println("4. Battery, Available storage: " + availableStorage);
-				time++;
+				time = pvEnergy.getTime(); // Time changed
 			} /*
-				 * else if (messageOnPort(x, "inFromLURequest", i)) { Energy
-				 * reqEnergy = (Energy) x.getValOnPort("inFromLURequest", i); if
-				 * (reqEnergy.getEnergy() <= stateOfCharge) { stateOfCharge -=
-				 * reqEnergy.getEnergy(); availableStorage +=
-				 * reqEnergy.getEnergy(); outputEnergy = reqEnergy; } else { if
-				 * (stateOfCharge != 0) outputEnergy = new
-				 * Energy(stateOfCharge); stateOfCharge = 0; availableStorage =
-				 * totalCapacity; } }
+				 * else if (messageOnPort(x, "inFromLURequest", i)) { Energy reqEnergy =
+				 * (Energy) x.getValOnPort("inFromLURequest", i); if (reqEnergy.getEnergy() <=
+				 * stateOfCharge) { stateOfCharge -= reqEnergy.getEnergy(); availableStorage +=
+				 * reqEnergy.getEnergy(); outputEnergy = reqEnergy; } else { if (stateOfCharge
+				 * != 0) outputEnergy = new Energy(stateOfCharge); stateOfCharge = 0;
+				 * availableStorage = totalCapacity; } }
 				 */
 		}
 

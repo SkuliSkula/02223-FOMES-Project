@@ -4,13 +4,16 @@ import GenCol.entity;
 
 public class Energy extends entity {
 	private double energy;
+	private double time;
 
 	public Energy() {
 		this.energy = 0;
+		this.time = 0;
 	}
 
-	public Energy(double energy) {
+	public Energy(double energy, double time) {
 		this.energy = energy;
+		this.time = time;
 	}
 
 	public double getEnergy() {
@@ -23,5 +26,13 @@ public class Energy extends entity {
 
 	public void print() {
 		System.out.println("Energy: " + energy);
+	}
+
+	public double getTime() {
+		return this.time;
+	}
+
+	public void setTime(double time) {
+		this.time = time;
 	}
 }

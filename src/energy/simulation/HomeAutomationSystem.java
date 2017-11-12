@@ -70,9 +70,9 @@ public class HomeAutomationSystem extends ViewableDigraph {
         preferredSize = new Dimension(805, 332);
         ((ViewableComponent)withName("Penis")).setPreferredLocation(new Point(-46, 42));
         ((ViewableComponent)withName("Battery")).setPreferredLocation(new Point(340, 37));
-        ((ViewableComponent)withName("Other penis")).setPreferredLocation(new Point(75, 125));
         ((ViewableComponent)withName("Generator")).setPreferredLocation(new Point(0, 202));
         ((ViewableComponent)withName("Tesla Model s")).setPreferredLocation(new Point(365, 235));
+        ((ViewableComponent)withName("Other penis")).setPreferredLocation(new Point(114, 121));
         ((ViewableComponent)withName("External Grid")).setPreferredLocation(new Point(137, 35));
     }
 }
