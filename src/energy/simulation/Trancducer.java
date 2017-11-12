@@ -23,12 +23,12 @@ public class Trancducer extends ViewableAtomic {
 	}
 
 	public Trancducer() {
-		this("tranqooder", 200);
+		this("tranqooder", 2000);
 	}
 
 	public void initialize() {
 		phase = "active";
-		sigma = INFINITY;
+		sigma = 20;
 		clock = 0;
 		counter = 0;
 		super.initialize();
@@ -42,7 +42,6 @@ public class Trancducer extends ViewableAtomic {
 	public void deltext(double e, message x) {
 		System.out.println("--------Transduceer elapsed time =" + e);
 		System.out.println("-------------------------------------");
-		clock = clock + e;
 		Continue(e);
 		for (int i = 0; i < x.size(); i++) {
 			if (messageOnPort(x, "inFromHouse", i)) {
@@ -84,7 +83,8 @@ public class Trancducer extends ViewableAtomic {
 	}
 
 	public void deltint() {
-		clock = clock + sigma;
+		System.out.println("trans");
+		clock = clock + 1;
 		holdIn("active", clock);
 		//passivate();
 	}

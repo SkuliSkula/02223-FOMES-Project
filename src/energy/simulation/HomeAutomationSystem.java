@@ -25,41 +25,40 @@ public class HomeAutomationSystem extends ViewableDigraph {
 	private void homeAutomationConstruct() {
 
 		addInport("in");
-		addOutport("outFromHouse");
-		addOutport("outFromGrid");
+		addOutport("outOfThisFuckingSimulation");
 
 		this.time = 1;
 		this.incrementTime = 1;
 		
-		ViewableAtomic pvPanel = new PhotoVoltaicPanel("PVpanel", this.time, incrementTime);
-		ViewableAtomic battery = new Battery("SuperBattery");
-		ViewableAtomic logicUnit = new LogicUnit("LogicUnit", this.time, incrementTime);
-		ViewableAtomic house = new House("AdrianHouse", this.time, incrementTime);
-		ViewableAtomic electricCar = new ElectricCar();
-		ViewableAtomic externalGrid = new ExternalPowerGrid();
+		ViewableAtomic generator = new Generator();
+		ViewableAtomic pv = new PhotoVoltaicPanel("Penis", 1);
+		ViewableAtomic lu = new LogicUnit("Other penis");
+		ViewableAtomic bat = new Battery();
+		ViewableAtomic car = new ElectricCar();
+		ViewableAtomic grid = new ExternalPowerGrid();
 
-		add(pvPanel);
-		add(battery);
-		add(logicUnit);
-		add(house);
-		add(electricCar);
-		add(externalGrid);
+		add(generator);
+		add(pv);
+		add(lu);
+		add(bat);
+		add(car);
+		add(grid);
 
 		initialize();
 
-		addCoupling(this, "in", pvPanel, "SolIn");
-		addCoupling(pvPanel, "outToLU", logicUnit, "inFromPVPanel");
-		addCoupling(logicUnit, "outToHouse", house, "inFromLU");
-		addCoupling(house, "outToLU", logicUnit, "inFromHouse");
-		addCoupling(logicUnit, "outToEV", electricCar, "inFromLU");
-		addCoupling(electricCar, "outExtraToLU", logicUnit, "inExtraFromEV");
-		addCoupling(logicUnit, "outToEG", externalGrid, "inFromLU");
-		addCoupling(logicUnit, "outRequestEnergy", battery, "inFromLURequest");
-		addCoupling(battery, "outToLU", logicUnit, "inFromBattery");
-		addCoupling(logicUnit, "outToBattery", battery, "inFromLU");
-		addCoupling(battery, "outExtraToLU", logicUnit, "inExtraFromBattery");
-		addCoupling(house, "out", this, "outFromHouse");
-		addCoupling(externalGrid, "outToTrancducer", this, "outFromGrid");
+		addCoupling(this, "in", generator, "start");
+		addCoupling(generator, "outFromEXPF", pv, "inFromEXPF");
+		addCoupling(pv, "outToLU", lu, "inFromPVPanel");
+		addCoupling(lu, "outToBattery", bat, "inFromLU");
+		addCoupling(bat, "outExtraToLU", lu, "inExtraFromBattery");
+		addCoupling(lu, "outToEV", car, "inFromLU1");
+		addCoupling(car, "carOverflow", lu, "inExtraFromEV");
+		addCoupling(lu, "outToEG", grid, "inFromLU");
+		addCoupling(grid, "outToTrancducer", this, "outOfThisFuckingSimulation");
+		
+		addTestInput("in", new Energy());
+		addTestInput("in", new Energy());
+		addTestInput("in", new Energy());
 	}
 
     /**
@@ -68,12 +67,12 @@ public class HomeAutomationSystem extends ViewableDigraph {
      */
     public void layoutForSimView()
     {
-        preferredSize = new Dimension(711, 519);
-        ((ViewableComponent)withName("SuperBattery")).setPreferredLocation(new Point(207, 412));
-        ((ViewableComponent)withName("LogicUnit")).setPreferredLocation(new Point(128, 202));
-        ((ViewableComponent)withName("External Grid")).setPreferredLocation(new Point(105, 388));
-        ((ViewableComponent)withName("PVpanel")).setPreferredLocation(new Point(-7, 117));
-        ((ViewableComponent)withName("AdrianHouse")).setPreferredLocation(new Point(325, 42));
-        ((ViewableComponent)withName("Tesla Model s")).setPreferredLocation(new Point(458, 187));
+        preferredSize = new Dimension(805, 332);
+        ((ViewableComponent)withName("Penis")).setPreferredLocation(new Point(-46, 42));
+        ((ViewableComponent)withName("Battery")).setPreferredLocation(new Point(340, 37));
+        ((ViewableComponent)withName("Other penis")).setPreferredLocation(new Point(75, 125));
+        ((ViewableComponent)withName("Generator")).setPreferredLocation(new Point(0, 202));
+        ((ViewableComponent)withName("Tesla Model s")).setPreferredLocation(new Point(365, 235));
+        ((ViewableComponent)withName("External Grid")).setPreferredLocation(new Point(137, 35));
     }
 }
