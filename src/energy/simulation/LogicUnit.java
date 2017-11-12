@@ -15,16 +15,15 @@ public class LogicUnit extends ViewableAtomic {
 		// addInport("inFromHouse"); // Request energy
 		addInport("inExtraFromBattery"); // Excesive flow of energy from the
 											// battery
-		// addInport("inFromBattery"); // Energy back after request
+		addInport("inFromBattery"); // Energy back after request
 		addInport("inExtraFromEV"); // Excesive energy from the Electric vehicle
 
-		// addOutport("outToHouse");
+		addOutport("outToHouse");
 		addOutport("outToBattery");
 		addOutport("outToEG");
-		// addOutport("outRequestEnergy"); // House or electric car can request
+		addOutport("outRequestEnergy"); // House or electric car can request
 		// energy
 		addOutport("outToEV"); // EV = Electric vehicle
-
 		initialize();
 	}
 
@@ -46,6 +45,11 @@ public class LogicUnit extends ViewableAtomic {
 				System.out.println("3. Logic unit - receiving energy: " + receivedEnergy.getEnergy());
 				this.energyToBattery = receivedEnergy;
 				holdIn("active", 1);
+				if (receivedEnergy.getTime() != 0) {
+					this.energyToRequest = new Energy(
+							House.getConsumptionPerHour((int) ((receivedEnergy.getTime() - 1) % 24)),
+							receivedEnergy.getTime() - 1);
+				}
 				System.out.println("Old time in LU:" + time);
 				time = receivedEnergy.getTime();
 				System.out.println("New time in LU from PV:" + time);
@@ -53,11 +57,12 @@ public class LogicUnit extends ViewableAtomic {
 				Energy receivedEnergy = (Energy) x.getValOnPort("inExtraFromBattery", i);
 				System.out
 						.println("Logic unit - receiving ovelflow energy from battery: " + receivedEnergy.getEnergy());
-				if ((int) time % 24 > 7 && (int) time % 24 < 16) {
+				if ((int) receivedEnergy.getTime() % 24 > 7 && (int) receivedEnergy.getTime() % 24 < 16) {
 					this.energyToGrid = receivedEnergy;
 				} else {
 					if (receivedEnergy.getEnergy() > EV_OUTPUT) {
-						this.energyToEV = new Energy(EV_OUTPUT, receivedEnergy.getTime()); // Time added
+						this.energyToEV = new Energy(EV_OUTPUT, receivedEnergy.getTime()); // Time
+																							// added
 						this.energyToGrid = new Energy(receivedEnergy.getEnergy() - EV_OUTPUT,
 								receivedEnergy.getTime());// Time added
 					} else {
@@ -70,17 +75,11 @@ public class LogicUnit extends ViewableAtomic {
 				System.out.println("Logic unit - receiving overflow energy from EV: " + receivedEnergy.getEnergy());
 				this.energyToGrid = receivedEnergy;
 				holdIn("active", INC_TIME);
-			} /*
-				 * else if (messageOnPort(x, "inFromHouse", i)) { Energy receivedEnergy =
-				 * (Energy) x.getValOnPort("inFromHouse", i);
-				 * System.out.println("Logic unit - receiving energy request from house: " +
-				 * receivedEnergy.getEnergy()); this.energyToRequest = receivedEnergy;
-				 * holdIn("active", time); }else if (messageOnPort(x, "inFromBattery", i)) {
-				 * Energy receivedEnergy = (Energy) x.getValOnPort("inFromBattery", i);
-				 * System.out.println("Logic unit - receiving overflow energy from EV: " +
-				 * receivedEnergy.getEnergy()); this.energyToHouse = receivedEnergy;
-				 * holdIn("active", time); }
-				 */
+			} else if(messageOnPort(x, "inFromBattery", i)){
+				Energy receivedEnergy = (Energy) x.getValOnPort("inFromBattery", i);
+				this.energyToHouse = receivedEnergy;
+				holdIn("active", INC_TIME);
+			}
 		}
 
 		System.out.println("3. external-Phase after: " + phase);

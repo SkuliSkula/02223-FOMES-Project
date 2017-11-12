@@ -6,7 +6,7 @@ import view.modeling.ViewableAtomic;
 public class House extends ViewableAtomic {
 	private double energyRequested;
 	private Energy deltaEnergy;
-	private final double[] CONSUMPTION_WH = { 110, 110, 110, 110, 110, 110, 110, 400, 400, 110, 110, 110, 110, 110, 110,
+	private final static double[] CONSUMPTION_WH = { 110, 110, 110, 110, 110, 110, 110, 400, 400, 110, 110, 110, 110, 110, 110,
 			110, 110, 450, 450, 450, 450, 400, 110, 110 };
 
 	private final int INC_TIME = 1;
@@ -77,5 +77,9 @@ public class House extends ViewableAtomic {
 
 	public String getTooltipText() {
 		return super.getTooltipText() + "\n" + "job: ";
+	}
+	
+	public static double getConsumptionPerHour(int hour){
+		return CONSUMPTION_WH[hour];
 	}
 }

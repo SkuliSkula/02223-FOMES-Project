@@ -34,17 +34,17 @@ public class Battery extends ViewableAtomic { // ViewableAtomic is used instead
 		this.stateOfCharge = 0;
 		this.excessEnergy = null;
 		addInport("inFromLU"); // Charge the battery
-		// addInport("inFromLURequest"); // Requested energy from House or
+		addInport("inFromLURequest"); // Requested energy from House or
 		// Electric
 		// car
 		addOutport("outExtraToLU");
-		// addOutport("outToLU"); // Send the requested energy
+		addOutport("outToLU"); // Send the requested energy
 
 		/*
-		 * addTestInput("inFromLU", new Energy(5000)); addTestInput("inFromLU", new
-		 * Energy(7000)); addTestInput("inFromLU", new Energy(8000));
-		 * addTestInput("inFromLU", new Energy(14000)); addTestInput("inFromLU", new
-		 * Energy(3000)); addTestInput("inFromLU", new Energy(1000));
+		 * addTestInput("inFromLU", new Energy(5000)); addTestInput("inFromLU",
+		 * new Energy(7000)); addTestInput("inFromLU", new Energy(8000));
+		 * addTestInput("inFromLU", new Energy(14000)); addTestInput("inFromLU",
+		 * new Energy(3000)); addTestInput("inFromLU", new Energy(1000));
 		 * addTestInput("inFromLURequest", new Energy(1000));
 		 * addTestInput("inFromLURequest", new Energy(5000));
 		 * addTestInput("inFromLURequest", new Energy(6000));
@@ -66,7 +66,7 @@ public class Battery extends ViewableAtomic { // ViewableAtomic is used instead
 		Continue(e);
 		System.out.println("4. ################# Battery, external sigma = " + sigma + ", and elapsed time = " + e);
 		System.out.println("4. Battery, Total capacity: " + totalCapacity + ", available storage: " + availableStorage);
-		String prevPhase = "";
+
 		boolean charging = false;
 		for (int i = 0; i < x.getLength(); i++) {
 			if (messageOnPort(x, "inFromLU", i)) {
@@ -85,21 +85,30 @@ public class Battery extends ViewableAtomic { // ViewableAtomic is used instead
 				} else {
 					if (availableStorage != 0)
 						charging = true;
-					excessEnergy = new Energy(pvEnergy.getEnergy() - availableStorage, pvEnergy.getTime());// Time added
+					excessEnergy = new Energy(pvEnergy.getEnergy() - availableStorage, pvEnergy.getTime());// Time
+																											// added
 					availableStorage = 0;
 					stateOfCharge = totalCapacity;
 				}
 				System.out.println("4. Current time in battery: " + time);
 				System.out.println("4. Battery, Available storage: " + availableStorage);
 				time = pvEnergy.getTime(); // Time changed
-			} /*
-				 * else if (messageOnPort(x, "inFromLURequest", i)) { Energy reqEnergy =
-				 * (Energy) x.getValOnPort("inFromLURequest", i); if (reqEnergy.getEnergy() <=
-				 * stateOfCharge) { stateOfCharge -= reqEnergy.getEnergy(); availableStorage +=
-				 * reqEnergy.getEnergy(); outputEnergy = reqEnergy; } else { if (stateOfCharge
-				 * != 0) outputEnergy = new Energy(stateOfCharge); stateOfCharge = 0;
-				 * availableStorage = totalCapacity; } }
-				 */
+			} else if (messageOnPort(x, "inFromLURequest", i)) {
+				Energy reqEnergy = (Energy) x.getValOnPort("inFromLURequest", i);
+				if (reqEnergy.getEnergy() <= stateOfCharge) {
+					stateOfCharge -= reqEnergy.getEnergy();
+					availableStorage += reqEnergy.getEnergy();
+					outputEnergy = reqEnergy;
+				} else {
+					if (stateOfCharge != 0)
+						outputEnergy = new Energy(stateOfCharge, reqEnergy.getTime());
+					else{
+						outputEnergy = new Energy(0, reqEnergy.getTime());
+					}
+					stateOfCharge = 0;
+					availableStorage = totalCapacity;
+				}
+			}
 		}
 
 		if (charging) {
@@ -109,7 +118,7 @@ public class Battery extends ViewableAtomic { // ViewableAtomic is used instead
 				holdIn("charging", 1);
 			}
 		} else {
-			if (outputEnergy != null) {
+			if (outputEnergy.getEnergy() != 0) {
 				holdIn("discharging", 1);
 			} else {
 				holdIn(phase, 1);
@@ -149,17 +158,15 @@ public class Battery extends ViewableAtomic { // ViewableAtomic is used instead
 				excessEnergy = null;
 			}
 		} else if (phaseIs("discharging")) {
-			if (outputEnergy != null) {
+				System.out.println("$$$$$$$$$$$$$$ Discharging " + outputEnergy.getEnergy() + "W");
 				m.add(makeContent("outToLU", outputEnergy));
 				outputEnergy = null;
-			} else {
-				m.add(makeContent("outToLU", new Energy()));
-			}
 		} else if (phaseIs("djarging")) {
 			if (excessEnergy != null) {
 				m.add(makeContent("outExtraToLU", excessEnergy));
 				excessEnergy = null;
 			}
+			System.out.println("$$$$$$$$$$$$$$ Discharging " + outputEnergy.getEnergy() + "W");
 			m.add(makeContent("outToLU", outputEnergy));
 			outputEnergy = null;
 		}
