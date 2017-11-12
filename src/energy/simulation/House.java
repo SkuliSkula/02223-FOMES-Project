@@ -25,7 +25,7 @@ public class House extends ViewableAtomic {
 
 	public void initialize() {
 		phase = "requesting";
-		sigma = INFINITY;
+		sigma = 20;
 		super.initialize();
 
 		energyRequested = new Energy();
@@ -36,12 +36,12 @@ public class House extends ViewableAtomic {
 	}
 
 	public void deltint() {
+		System.out.println("house int");
 		time += sigma;
 	}
 
 	public void deltext(double e, message x) {
 		Continue(e);
-		time += e;
 
 		if (phaseIs("requesting")) {
 			dayHour = time % 24;

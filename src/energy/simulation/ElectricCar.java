@@ -5,89 +5,109 @@ import view.modeling.ViewableAtomic;
 
 /*This class will simulate Tesla Model S P100D*/
 public class ElectricCar extends ViewableAtomic {
-	private final double BATTERY_CAPACITY = 100000; //Wh
+	private final double BATTERY_CAPACITY = 2000; // Wh
 	private double currentCapacity;
-	private Energy energyReceived;
-	private Energy energyExtra;
+	protected Energy energyReceived;
+	protected Energy energyExtra;
+	private boolean takenOut;
 
-	private final int INC_TIME = 1;
+	private final double INC_TIME = 1;
 	private double time;
 
 	public ElectricCar() {
-		super("Tesla Model s");
+		this("Tesla Model s");
 	}
 
 	public ElectricCar(String name) {
 		super(name);
 
-		addInport("inFromLU");
-		addOutport("outExtraToLU");
+		addInport("inFromLU1");
+		addOutport("carOverflow");
 
 		initialize();
 	}
 
 	public void initialize() {
-		phase = "charging";
-		sigma = INFINITY;
-		super.initialize();
+		holdIn("idle", INC_TIME);
+		System.out.println("5. initialized with sigma = " + sigma);
 		time = 0;
 		currentCapacity = 0;
 		energyReceived = new Energy();
 		energyExtra = new Energy();
+		takenOut = false;
+		super.initialize();
 	}
 
 	public void deltint() {
-		time += sigma;
-		energyExtra.setEnergy(0);
+		System.out.println("5. internal");
+
+		if (phaseIs("charging")) {
+			holdIn("charging", INC_TIME);
+		} else if (phaseIs("idle")) {
+			holdIn("idle", INC_TIME);
+		}
+
+		time += INC_TIME;
+		if (!carIsHome()) {
+			takenOut = true;
+		}
 	}
 
 	public void deltext(double e, message x) {
 		Continue(e);
-		this.time += e;
 
 		energyExtra.setEnergy(0);
-
-		if (carIsHome()) {
-			if (time % 24 == 16) {
+		System.out.println("5. ################# external sigma = " + sigma + ", and elapsed time = " + e + " in phase: " + phase);
+		//if (carIsHome()) {
+			System.out.println("5. car is home");
+			if (time % 24 > 16 && takenOut) {
 				carReturns();
+				takenOut = false;
 			}
-
 			if (phaseIs("charging")) {
 				for (int i = 0; i < x.getLength(); i++) {
-					if (messageOnPort(x, "inFromLU", i)) {
-						energyReceived = (Energy) x.getValOnPort("inFromLU", i);
+					if (messageOnPort(x, "inFromLU1", i)) {
+						energyReceived = (Energy) x.getValOnPort("inFromLU1", i);
+						System.out.println("received energy: " + energyExtra.getEnergy());
 						charge(energyReceived.getEnergy());
 						energyReceived.setEnergy(0);
 
 						if (charged()) {
-							holdIn("idle", INFINITY);
+							holdIn("idle", INC_TIME);
 						} else {
 							holdIn("charging", INC_TIME);
 						}
 					}
 				}
-			}
-			if (phaseIs("idle")) {
+			} else if (phaseIs("idle")) {
 				if (charged()) {
 					for (int i = 0; i < x.getLength(); i++) {
-						if (messageOnPort(x, "inFromLU", i)) {
-							energyExtra = (Energy) x.getValOnPort("inFromLU", i);
+						if (messageOnPort(x, "inFromLU1", i)) {
+							energyExtra = (Energy) x.getValOnPort("inFromLU1", i);
 						}
 					}
-					holdIn("idle", INFINITY);
+					holdIn("idle", INC_TIME);
 				} else {
+					for (int i = 0; i < x.getLength(); i++) {
+						if (messageOnPort(x, "inFromLU1", i)) {
+							energyReceived = (Energy) x.getValOnPort("inFromLU1", i);
+							charge(energyReceived.getEnergy());
+							energyReceived.setEnergy(0);
+						}
+					}
 					holdIn("charging", INC_TIME);
 				}
 			}
-		}
+		//}
 	}
 
 	public message out() {
 		message m = new message();
-
+		System.out.println("5. out() message");
+		System.out.println("5. " + energyExtra.getEnergy());
 		if (phaseIs("idle")) {
 			if (energyExtra.getEnergy() != 0) {
-				m.add(makeContent("outExtraToLU", energyExtra));
+				m.add(makeContent("carOverflow", energyExtra));
 			}
 		}
 		return m;
@@ -111,7 +131,7 @@ public class ElectricCar extends ViewableAtomic {
 	}
 
 	private void carReturns() {
-		this.currentCapacity = currentCapacity/2;
+		this.currentCapacity = currentCapacity / 2;
 	}
 
 	private boolean carIsHome() {

@@ -5,72 +5,107 @@ import GenCol.entity;
 import model.modeling.message;
 import view.modeling.ViewableAtomic;
 
-public class Generator extends ViewableAtomic{
+public class Generator extends ViewableAtomic {
 	private Year year;
 	private int timeCycle;
 	private int monthCounter;
 	private int dayCounter;
 	private int time;
 	double genValMultiplier;
+
 	public Generator() {
 		super("Generator");
-		
+
 		addInport("start");
 		addOutport("outFromEXPF");
-		addInport("stop");
-		
+		// addInport("stop");
+
 		initialize();
 	}
-	
+
 	public void initialize() {
-		holdIn("active", INFINITY);
-		sigma = INFINITY;
+		holdIn("active", 1);
 		timeCycle = 0;
 		year = new Year();
+		
 		monthCounter = 0;
 		dayCounter = 1;
-		time = 0;
 		super.initialize();
-		System.out.println("########## init generator");
+		time = 0;
+		System.out.println("1. init generator");
 	}
-	
+
 	public void deltint(double e, message x) {
-		System.out.println("############### internal generator");
-		time += 1;
+		System.out.println("1. internal generator");
+		if (phaseIs("active")) {
+			time++;
+			holdIn("active", 1);
+		}
 	}
 
 	public void deltext(double e, message x) {
-		System.out.println("############## external generator");
-		for(int i = 0; i < x.getLength(); i++) {
-			if(messageOnPort(x, "start", i)) {
-				
-				//hour = (int) e;
-				timeCycle = (int)time % 24;
-				
-				if(timeCycle == 23)
+		Continue(e);
+		System.out.println("################# 1. external sigma = " + sigma + ", and elapsed time = " + e);
+		for (int i = 0; i < x.getLength(); i++) {
+			if (messageOnPort(x, "start", i)) {
+
+				// hour = (int) e;
+				timeCycle = (int) time % 24;
+
+				if (timeCycle == 23) {
+					System.out.println("Timecycle if: " + timeCycle);
 					dayCounter++;
-				
+				}
+
 				int monthLength = year.getMonths().get(monthCounter).getLength();
-				if(dayCounter == monthLength)
+				if (dayCounter == monthLength) {
+					System.out.println("DayCounter if: " + dayCounter);
 					monthCounter++;
+				}
 
 				genValMultiplier = year.getMonths().get(monthCounter).getDayArray()[timeCycle];
-				
+				System.out.println("Time: " + time + ", Index month: " + monthCounter + ", Index time: " + timeCycle
+						+ ", The value for month and hour is: " + genValMultiplier);
+
 				System.out.println("Day: " + dayCounter);
 				System.out.println("Month: " + monthCounter);
-				
-				holdIn("active", time);
+
+				holdIn("active", 1);
 			}
-			else if(messageOnPort(x, "stop", i)) {
-				holdIn("idle", INFINITY);
-			}
+			/*
+			 * else if(messageOnPort(x, "stop", i)) { holdIn("idle", INFINITY); }
+			 */
 		}
 	}
 
 	public message out() {
-		System.out.println("############### out generator");
+		System.out.println("1. out generator: " + genValMultiplier);
+
+		///////////////////
+		timeCycle = (int) time % 24;
+		//HARDCODED
+
+		if (timeCycle == 23)
+			dayCounter++;
+
+		int monthLength = year.getMonths().get(monthCounter).getLength();
+		if (dayCounter == monthLength)
+			monthCounter++;
+
+		genValMultiplier = year.getMonths().get(monthCounter).getDayArray()[timeCycle];
+		System.out.println("Time: " + time + ", Index month: " + monthCounter + ", Index time: " + timeCycle
+				+ ", The value for month and hour is: " + genValMultiplier);
+
+		System.out.println("Day: " + dayCounter);
+		System.out.println("Month: " + monthCounter);
+
+		//////////////////
+
 		message m = new message();
-		m.add(makeContent("outToPV", new doubleEnt(genValMultiplier)));
+		// m.add(makeContent("outFromEXPF", new doubleEnt(2.0)));
+		m.add(makeContent("outFromEXPF", new doubleEnt(genValMultiplier)));
+		System.out.println("Generator Time gen: " + time);
+		time++;
 		return m;
 	}
 
@@ -87,6 +122,5 @@ public class Generator extends ViewableAtomic{
 	public String getTooltipText() {
 		return super.getTooltipText() + "\n" + "job: ";
 	}
-	
 
 }
