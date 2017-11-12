@@ -4,18 +4,19 @@ import java.util.ArrayList;
 
 public class Year {
 	private ArrayList<Month> months;
-	
+
 	public Year() {
 		months = new ArrayList<>();
 		initializeMonths();
 	}
-	
+
 	public ArrayList<Month> getMonths() {
 		return months;
 	}
+
 	private void initializeMonths() {
 		// Create the days arrays
-		
+
 		months.add(new Month("January", 31, hours1()));
 		months.add(new Month("February", 28, hours2()));
 		months.add(new Month("March", 31, hours4()));
@@ -29,7 +30,15 @@ public class Year {
 		months.add(new Month("November", 30, hours1()));
 		months.add(new Month("December", 31, hours1()));
 	}
-	
+
+	public void setToZero() {
+		for (int i = 0; i < months.size(); i++) {
+			for (int j = 0; j < 24; j++) {
+				months.get(i).dayArray[j] = 0;
+			}
+		}
+	}
+
 	private double[] hours1() {
 		double[] hours = new double[24];
 		hours[0] = 0.0;
@@ -58,7 +67,7 @@ public class Year {
 		hours[23] = 0.0;
 		return hours;
 	}
-	
+
 	private double[] hours2() {
 		double[] hours = new double[24];
 		hours[0] = 0.0;
@@ -87,7 +96,7 @@ public class Year {
 		hours[23] = 0.0;
 		return hours;
 	}
-	
+
 	private double[] hours3() {
 		double[] hours = new double[24];
 		hours[0] = 0.0;
@@ -116,7 +125,7 @@ public class Year {
 		hours[23] = 0.0;
 		return hours;
 	}
-	
+
 	private double[] hours4() {
 		double[] hours = new double[24];
 		hours[0] = 0.0;
@@ -145,7 +154,7 @@ public class Year {
 		hours[23] = 0.0;
 		return hours;
 	}
-	
+
 	private double[] hours5() {
 		double[] hours = new double[24];
 		hours[0] = 0.0;
@@ -174,7 +183,7 @@ public class Year {
 		hours[23] = 0.0;
 		return hours;
 	}
-	
+
 	private double[] hours7() {
 		double[] hours = new double[24];
 		hours[0] = 0.0;
@@ -203,7 +212,7 @@ public class Year {
 		hours[23] = 0.0;
 		return hours;
 	}
-	
+
 	private double[] hours8() {
 		double[] hours = new double[24];
 		hours[0] = 0.0;
@@ -232,25 +241,26 @@ public class Year {
 		hours[23] = 0.0;
 		return hours;
 	}
-	
+
 	class Month {
 		private String month;
 		private int length;
 		private double[] dayArray;
+
 		private Month(String month, int length, double[] dayArray) {
 			this.month = month;
 			this.length = length;
 			this.dayArray = dayArray;
 		}
-		
+
 		public double[] getDayArray() {
 			return this.dayArray;
 		}
-		
+
 		public int getLength() {
 			return this.length;
 		}
-		
+
 		public String getMonthName() {
 			return this.month;
 		}
