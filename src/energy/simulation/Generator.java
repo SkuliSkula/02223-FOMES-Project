@@ -95,7 +95,7 @@ public class Generator extends ViewableAtomic {
 	}
 
 	public String getTooltipText() {
-		return super.getTooltipText() + "\n" + "job: ";
+		return super.getTooltipText() + "\n" + "Day: " + dayCounter + "\nMonth: " + monthCounter;
 	}
 
 	private void calculateValues() {

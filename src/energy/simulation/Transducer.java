@@ -8,7 +8,7 @@ import GenCol.doubleEnt;
 import model.modeling.message;
 import view.modeling.ViewableAtomic;
 
-public class Trancducer extends ViewableAtomic {
+public class Transducer extends ViewableAtomic {
 	private Year houseUsage;
 	private Year extraEnergyGrid;
 
@@ -29,7 +29,7 @@ public class Trancducer extends ViewableAtomic {
 
 	protected double clock;
 
-	public Trancducer(String name) {
+	public Transducer(String name) {
 		super(name);
 		addInport("inFromHouse");
 		addInport("inFromGrid");
@@ -38,8 +38,8 @@ public class Trancducer extends ViewableAtomic {
 		initialize();
 	}
 
-	public Trancducer() {
-		this("Trancducer");
+	public Transducer() {
+		this("Transducer");
 	}
 
 	public void initialize() {

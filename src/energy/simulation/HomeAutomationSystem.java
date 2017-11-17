@@ -25,7 +25,7 @@ public class HomeAutomationSystem extends ViewableDigraph {
 		addOutport("outOfSimulation");
 
 		ViewableAtomic generator = new Generator();
-		ViewableAtomic trancuder = new Trancducer();
+		ViewableAtomic trancuder = new Transducer();
 		ViewableAtomic pv = new PhotoVoltaicPanel("PV", 1);
 		ViewableAtomic lu = new LogicUnit("LU");
 		ViewableAtomic bat = new Battery("Battery", 3, 15000);
