@@ -25,11 +25,11 @@ public class HomeAutomationSystem extends ViewableDigraph {
 		addOutport("outOfSimulation");
 
 		ViewableAtomic generator = new Generator();
-		ViewableAtomic trancuder = new Trancducer();
-		ViewableAtomic pv = new PhotoVoltaicPanel("PV", 1);
+		ViewableAtomic trancuder = new Transducer();
+		ViewableAtomic pv = new PhotoVoltaicPanel("PV", 2);
 		ViewableAtomic lu = new LogicUnit("LU");
-		ViewableAtomic bat = new Battery("Battery", 3, 5000);
-		ViewableAtomic car = new ElectricCar();
+		ViewableAtomic bat = new Battery("Battery", 3, 15000);
+		//ViewableAtomic car = new ElectricCar();
 		ViewableAtomic grid = new ExternalPowerGrid();
 		ViewableAtomic house = new House("House");
 
@@ -38,7 +38,7 @@ public class HomeAutomationSystem extends ViewableDigraph {
 		add(pv);
 		add(lu);
 		add(bat);
-		add(car);
+		//add(car);
 		add(grid);
 		add(house);
 
@@ -49,8 +49,8 @@ public class HomeAutomationSystem extends ViewableDigraph {
 		addCoupling(pv, "outToLU", lu, "inFromPVPanel");
 		addCoupling(lu, "outToBattery", bat, "inFromLU");
 		addCoupling(bat, "outExtraToLU", lu, "inExtraFromBattery");
-		addCoupling(lu, "outToEV", car, "inFromLU1");
-		addCoupling(car, "carOverflow", lu, "inExtraFromEV");
+		//addCoupling(lu, "outToEV", car, "inFromLU1");
+		//addCoupling(car, "carOverflow", lu, "inExtraFromEV");
 		addCoupling(lu, "outToEG", grid, "inFromLU");
 
 		addCoupling(lu, "outRequestEnergy", bat, "inFromLURequest");
@@ -60,6 +60,7 @@ public class HomeAutomationSystem extends ViewableDigraph {
 		addCoupling(grid, "outToTrancducer", trancuder, "inFromGrid");
 		addCoupling(trancuder, "out", this, "outOfSimulation");
 
+		addTestInput("in", new entity());
 	}
 
     /**
@@ -68,14 +69,13 @@ public class HomeAutomationSystem extends ViewableDigraph {
      */
     public void layoutForSimView()
     {
-        preferredSize = new Dimension(1048, 332);
-        ((ViewableComponent)withName("PV")).setPreferredLocation(new Point(124, 98));
-        ((ViewableComponent)withName("Tesla Model s")).setPreferredLocation(new Point(655, 161));
-        ((ViewableComponent)withName("Battery")).setPreferredLocation(new Point(428, 233));
-        ((ViewableComponent)withName("LU")).setPreferredLocation(new Point(344, 81));
-        ((ViewableComponent)withName("House")).setPreferredLocation(new Point(663, 44));
-        ((ViewableComponent)withName("Trancducer")).setPreferredLocation(new Point(-56, 33));
-        ((ViewableComponent)withName("Generator")).setPreferredLocation(new Point(13, 162));
-        ((ViewableComponent)withName("External Grid")).setPreferredLocation(new Point(204, 255));
+        preferredSize = new Dimension(805, 332);
+        ((ViewableComponent)withName("PV")).setPreferredLocation(new Point(-46, 259));
+        ((ViewableComponent)withName("Transducer")).setPreferredLocation(new Point(210, 21));
+        ((ViewableComponent)withName("House")).setPreferredLocation(new Point(386, 221));
+        ((ViewableComponent)withName("LU")).setPreferredLocation(new Point(121, 132));
+        ((ViewableComponent)withName("Generator")).setPreferredLocation(new Point(-31, 152));
+        ((ViewableComponent)withName("External Grid")).setPreferredLocation(new Point(50, 50));
+        ((ViewableComponent)withName("Battery")).setPreferredLocation(new Point(159, 266));
     }
 }

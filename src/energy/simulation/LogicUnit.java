@@ -4,9 +4,8 @@ import model.modeling.message;
 import view.modeling.ViewableAtomic;
 
 public class LogicUnit extends ViewableAtomic {
-	protected Energy energyToHouse, energyToBattery, energyToGrid, energyToRequest, energyToEV;
+	protected Energy energyToHouse, energyToBattery, energyToGrid, energyToRequest/* , energyToEV */;
 	protected final static double EV_OUTPUT = 17300;
-	private static final double INC_TIME = 1;
 	protected double time;
 
 	public LogicUnit(String name) {
@@ -16,19 +15,20 @@ public class LogicUnit extends ViewableAtomic {
 		addInport("inExtraFromBattery"); // Excesive flow of energy from the
 											// battery
 		addInport("inFromBattery"); // Energy back after request
-		addInport("inExtraFromEV"); // Excesive energy from the Electric vehicle
+		// addInport("inExtraFromEV"); // Excesive energy from the Electric
+		// vehicle
 
 		addOutport("outToHouse");
 		addOutport("outToBattery");
 		addOutport("outToEG");
 		addOutport("outRequestEnergy"); // House or electric car can request
 		// energy
-		addOutport("outToEV"); // EV = Electric vehicle
+		// addOutport("outToEV"); // EV = Electric vehicle
 		initialize();
 	}
 
 	public void initialize() {
-		holdIn("idle", 1);
+		holdIn("idle", INFINITY);
 		System.out.println("3. LU initialized with sigma = " + sigma);
 		this.time = 0;
 		super.initialize();
@@ -44,7 +44,7 @@ public class LogicUnit extends ViewableAtomic {
 				Energy receivedEnergy = (Energy) x.getValOnPort("inFromPVPanel", i);
 				System.out.println("3. Logic unit - receiving energy: " + receivedEnergy.getEnergy());
 				this.energyToBattery = receivedEnergy;
-				holdIn("active", 1);
+				holdIn("active", 0);
 				if (receivedEnergy.getTime() != 0) {
 					this.energyToRequest = new Energy(
 							House.getConsumptionPerHour((int) ((receivedEnergy.getTime() - 1) % 24)),
@@ -57,39 +57,27 @@ public class LogicUnit extends ViewableAtomic {
 				Energy receivedEnergy = (Energy) x.getValOnPort("inExtraFromBattery", i);
 				System.out
 						.println("Logic unit - receiving ovelflow energy from battery: " + receivedEnergy.getEnergy());
-				if ((int) receivedEnergy.getTime() % 24 > 7 && (int) receivedEnergy.getTime() % 24 < 16) {
-					this.energyToGrid = receivedEnergy;
-				} else {
-					if (receivedEnergy.getEnergy() > EV_OUTPUT) {
-						this.energyToEV = new Energy(EV_OUTPUT, receivedEnergy.getTime()); // Time
-																							// added
-						this.energyToGrid = new Energy(receivedEnergy.getEnergy() - EV_OUTPUT,
-								receivedEnergy.getTime());// Time added
-					} else {
-						this.energyToEV = receivedEnergy;
-					}
-				}
-				holdIn("active", 1);
-			} else if (messageOnPort(x, "inExtraFromEV", i)) {
-				Energy receivedEnergy = (Energy) x.getValOnPort("inExtraFromEV", i);
-				System.out.println("Logic unit - receiving overflow energy from EV: " + receivedEnergy.getEnergy());
 				this.energyToGrid = receivedEnergy;
-				holdIn("active", INC_TIME);
-			} else if(messageOnPort(x, "inFromBattery", i)){
+				holdIn("active", 0);
+			} else if (messageOnPort(x, "inFromBattery", i)) {
 				Energy receivedEnergy = (Energy) x.getValOnPort("inFromBattery", i);
 				this.energyToHouse = receivedEnergy;
-				holdIn("active", INC_TIME);
+				holdIn("active", 0);
 			}
 		}
 
 		System.out.println("3. external-Phase after: " + phase);
 	}
 
-	/*
-	 * public void deltint(double e, message x) {
-	 * System.out.println("3. Logic Unit internal"); if (phaseIs("active")) {
-	 * time++; holdIn("active", 1); } }
-	 */
+	public void deltint(double e, message x) {
+		System.out.println("3. Logic Unit internal");
+		if (phaseIs("active")) {
+			holdIn("idle", 1);
+		}
+		if (phaseIs("idle")) {
+			holdIn("active", 0);
+		}
+	}
 
 	public void deltcon(double e, message x) {
 		deltint();
@@ -113,11 +101,6 @@ public class LogicUnit extends ViewableAtomic {
 			if (energyToRequest != null) {
 				m.add(makeContent("outRequestEnergy", energyToRequest));
 				energyToRequest = null;
-			}
-			if (energyToEV != null) {
-				System.out.println("________________________ Energy to be sent to the car: " + energyToEV.getEnergy() + ", at time: " + energyToEV.getTime());
-				m.add(makeContent("outToEV", energyToEV));
-				energyToEV = null;
 			}
 			if (energyToGrid != null) {
 				m.add(makeContent("outToEG", energyToGrid));

@@ -21,11 +21,14 @@ public class Generator extends ViewableAtomic {
 		addOutport("outFromEXPF");
 		addOutport("stop");
 
+		addTestInput("start", new entity());
+		addTestInput("stop", new entity());
+
 		initialize();
 	}
 
 	public void initialize() {
-		holdIn("active", 1);
+		holdIn("passive", INFINITY);
 		timeCycle = 0;
 		year = new Year();
 
@@ -37,39 +40,42 @@ public class Generator extends ViewableAtomic {
 		System.out.println("1. init generator");
 	}
 
-	public void deltint(double d) {
+	public void deltint() {
 		System.out.println("1. internal generator");
 		if (phaseIs("active")) {
 			time++;
-			holdIn("active", 1);
+			holdIn("idle", 1);
+		}
+		if (phaseIs("idle")) {
+			holdIn("active", 0);
 		}
 	}
 
-	/*
-	 * public void deltext(double e, message x) { Continue(e);
-	 * System.out.println("################# 1. external sigma = " + sigma +
-	 * ", and elapsed time = " + e); for (int i = 0; i < x.getLength(); i++) { if
-	 * (messageOnPort(x, "start", i)) { holdIn("active", 1); } /* else
-	 * if(messageOnPort(x, "stop", i)) { holdIn("idle", INFINITY); }
-	 */
-	/*
-	 * } }
-	 */
+	public void deltext(double e, message x) {
+		Continue(e);
+		for (int i = 0; i < x.getLength(); i++) {
+			if (messageOnPort(x, "start", i)) {
+				holdIn("active", 0);
+			} else if (messageOnPort(x, "stop", i)) {
+				holdIn("passive", INFINITY);
+			}
+		}
+	}
 
 	public message out() {
 		System.out.println("1. out generator: " + genValMultiplier);
+
 		message m = new message();
-
 		calculateValues();
-
-		m.add(makeContent("outFromEXPF", new doubleEnt(genValMultiplier)));
-		System.out.println("Generator Time gen: " + time);
-		time++;
+		if (phaseIs("active")) {
+			m.add(makeContent("outFromEXPF", new doubleEnt(genValMultiplier)));
+			System.out.println("Generator Time gen: " + time);
+		}
+		// time++;
 		
 		if(generationDone) {
 			m.add(makeContent("stop", new doubleEnt(-1)));
 		}
-
 		return m;
 	}
 
@@ -84,7 +90,7 @@ public class Generator extends ViewableAtomic {
 	}
 
 	public String getTooltipText() {
-		return super.getTooltipText() + "\n" + "job: ";
+		return super.getTooltipText() + "\n" + "Day: " + dayCounter + "\nMonth: " + monthCounter;
 	}
 
 	private void calculateValues() {

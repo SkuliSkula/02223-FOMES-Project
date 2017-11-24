@@ -7,7 +7,7 @@ import view.modeling.ViewableAtomic;
 public class Battery extends ViewableAtomic { // ViewableAtomic is used instead
 												// of atomic due to its
 												// graphics capability
-	private final static double BATTERY_CAPACITY = 13500;
+	private final static double BATTERY_CAPACITY = 135;
 	private final static double MIN_PERCENT = 25, MAX_PERCENT = 85;
 	protected static final double INC_TIME = 1;
 	private double availableStorage;
@@ -47,7 +47,7 @@ public class Battery extends ViewableAtomic { // ViewableAtomic is used instead
 	}
 
 	public void initialize() {
-		holdIn("idle", 1);
+		holdIn("idle", INFINITY);
 		System.out.println("4. Battery, initialized with sigma = " + sigma);
 		this.time = 0;
 		super.initialize();
@@ -63,7 +63,7 @@ public class Battery extends ViewableAtomic { // ViewableAtomic is used instead
 			if (messageOnPort(x, "inFromLU", i)) {
 				Energy pvEnergy = (Energy) x.getValOnPort("inFromLU", i);
 				System.out.println("4. Received energy from LU: " + pvEnergy.getEnergy());
-				if (pvEnergy.getEnergy() <= availableStorage && pvEnergy.getEnergy() <= (noOfBatteries - 1) * 5000) {
+				if (pvEnergy.getEnergy() <= availableStorage || pvEnergy.getEnergy() > (noOfBatteries - 1) * 5000) {
 					charging = true;
 					availableStorage -= pvEnergy.getEnergy();
 					stateOfCharge += pvEnergy.getEnergy();
@@ -104,15 +104,15 @@ public class Battery extends ViewableAtomic { // ViewableAtomic is used instead
 
 		if (charging) {
 			if (outputEnergy != null) {
-				holdIn("djarging", 1);
+				holdIn("djarging", 0);
 			} else {
-				holdIn("charging", 1);
+				holdIn("charging", 0);
 			}
 		} else {
 			if (outputEnergy.getEnergy() != 0) {
-				holdIn("discharging", 1);
+				holdIn("discharging", 0);
 			} else {
-				holdIn(phase, 1);
+				holdIn(phase, 0);
 			}
 		}
 	}

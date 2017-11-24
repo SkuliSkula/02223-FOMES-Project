@@ -24,7 +24,7 @@ public class ExternalPowerGrid extends ViewableAtomic {
 	}
 
 	public void initialize() {
-		holdIn("idle", INC_TIME);
+		holdIn("idle", INFINITY);
 		System.out.println("6. initialized with sigma = " + sigma);
 		this.time = 0;
 		super.initialize();
@@ -33,12 +33,10 @@ public class ExternalPowerGrid extends ViewableAtomic {
 	public void deltint() {
 		System.out.println("6. grid internal");
 		if (phaseIs("taking")) {
-			holdIn("taking", INC_TIME);
+			holdIn("idle", 1);
 		} else if (phaseIs("idle")) {
-			holdIn("idle", INC_TIME);
+			holdIn("taking", 0);
 		}
-
-		time++;
 	}
 
 	public void deltext(double e, message x) {
@@ -51,7 +49,7 @@ public class ExternalPowerGrid extends ViewableAtomic {
 					System.out.println("6. Energy received in the Power Grid: " + energy.getEnergy());
 					this.excess = energy;
 					this.totalExcess += energy.getEnergy();
-					holdIn("taking", INC_TIME);
+					holdIn("taking", 0);
 				}
 			}
 		}
@@ -60,7 +58,7 @@ public class ExternalPowerGrid extends ViewableAtomic {
 	public message out() {
 		message m = new message();
 
-		if (excess != null) {
+		if (phaseIs("taking")) {
 			m.add(makeContent("outToTrancducer", excess));
 			excess = null;
 		}
