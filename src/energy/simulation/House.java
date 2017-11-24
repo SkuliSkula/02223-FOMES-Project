@@ -21,7 +21,7 @@ public class House extends ViewableAtomic {
 	}
 
 	public void initialize() {
-		holdIn("idle", INC_TIME);
+		holdIn("idle", INFINITY);
 		System.out.println("7. House, initialized with sigma = " + sigma);
 		consumed = 0;
 		super.initialize();
@@ -33,10 +33,10 @@ public class House extends ViewableAtomic {
 	public void deltint() {
 		System.out.println("7. internal house");
 		if (phaseIs("receiving")) {
-			holdIn("receiving", INC_TIME);
+			holdIn("idle", 1);
 		}
 		if (phaseIs("idle")) {
-			holdIn("idle", INC_TIME);
+			holdIn("receiving", 0);
 		}
 	}
 
@@ -51,7 +51,7 @@ public class House extends ViewableAtomic {
 					deltaEnergy = new Energy(en.getEnergy() - energyRequested, en.getTime());
 					consumed += en.getEnergy();
 					System.out.println("House has consumed: " + consumed + "W from the battery since the start of the program!");
-					holdIn("receiving", INC_TIME);
+					holdIn("receiving", 0);
 				}
 			}
 		}

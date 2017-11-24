@@ -8,21 +8,24 @@ public class PhotoVoltaicPanel extends ViewableAtomic {
 	protected double time;
 	protected int generated;
 	protected doubleEnt ent;
-	protected int genVal;
+	protected double genVal;
+	protected int noOfPanels;
+	private static final double PANEL_OUTPUT = 345;
 
-	public PhotoVoltaicPanel(String name, double incrementTime) {
+	public PhotoVoltaicPanel(String name, int numberOfPanels) {
 		super(name);
 		addInport("inFromEXPF");
 		addOutport("outToLU");
 		this.time = 0;
+		this.noOfPanels = numberOfPanels;
 		initialize();
 	}
 
 	public void initialize() {
-		holdIn("idle", 1);
+		holdIn("idle", INFINITY);
 		System.out.println("2. PV panel, initialized with sigma = " + sigma);
 		generated = 0;
-		genVal = 345;
+		genVal = PANEL_OUTPUT * noOfPanels;
 		super.initialize();
 	}
 
@@ -39,21 +42,24 @@ public class PhotoVoltaicPanel extends ViewableAtomic {
 				System.out.println("Time in PV panel: " + time);
 				generated = (int) (genVal * ent.getv());
 				System.out.println("PV panel Generated energy: " + generated);
-				holdIn("active", 1);
+				holdIn("active", 0);
 			}
 		}
 	}
 
 	// internal function like time
-	/*public void deltint(double e, message x) {
+	public void deltint(double e, message x) {
 		System.out.println("2. PV panel internal ");
 		System.out.println("Incrementing time in deltInt PVPanel!");
 		time++;
 		if (phaseIs("active")) {
 			time++;
-			holdIn("active", 1);
+			holdIn("idle", 1);
 		}
-	}*/
+		if (phaseIs("idle")) {
+			holdIn("active", 0);
+		}
+	}
 
 	// If deltint and deltext happen at the same time this function decides the
 	// priority
@@ -64,9 +70,11 @@ public class PhotoVoltaicPanel extends ViewableAtomic {
 
 	public message out() {
 		message m = new message();
-		System.out.println("2. Pv panel out() message with sigma = " + sigma + ", energy generated " + generated);
-		m.add(makeContent("outToLU", new Energy(generated, time)));
-		System.out.println("2. Pv panel out() sending: " + generated+ " at time " + time);
+		if (phaseIs("active")) {
+			System.out.println("2. Pv panel out() message with sigma = " + sigma + ", energy generated " + generated);
+			m.add(makeContent("outToLU", new Energy(generated, time)));
+			System.out.println("2. Pv panel out() sending: " + generated + " at time " + time);
+		}
 		time++;
 		return m;
 	}

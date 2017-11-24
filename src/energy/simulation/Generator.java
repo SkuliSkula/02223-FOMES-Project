@@ -58,29 +58,18 @@ public class Generator extends ViewableAtomic {
 				holdIn("passive", INFINITY);
 			}
 		}
-		System.out.println("EEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEE");
 	}
-
-	/*
-	 * public void deltext(double e, message x) { Continue(e);
-	 * System.out.println("################# 1. external sigma = " + sigma +
-	 * ", and elapsed time = " + e); for (int i = 0; i < x.getLength(); i++) {
-	 * if (messageOnPort(x, "start", i)) { holdIn("active", 1); } /* else
-	 * if(messageOnPort(x, "stop", i)) { holdIn("idle", INFINITY); }
-	 */
-	/*
-	 * } }
-	 */
 
 	public message out() {
 		System.out.println("1. out generator: " + genValMultiplier);
 
-		// calculateValues();
-
 		message m = new message();
-		m.add(makeContent("outFromEXPF", new doubleEnt(genValMultiplier)));
-		System.out.println("Generator Time gen: " + time);
-		//time++;
+		calculateValues();
+		if (phaseIs("active")) {
+			m.add(makeContent("outFromEXPF", new doubleEnt(genValMultiplier)));
+			System.out.println("Generator Time gen: " + time);
+		}
+		// time++;
 		return m;
 	}
 
