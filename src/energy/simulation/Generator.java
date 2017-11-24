@@ -12,13 +12,14 @@ public class Generator extends ViewableAtomic {
 	private int dayCounter;
 	private int time;
 	double genValMultiplier;
+	private boolean generationDone;
 
 	public Generator() {
 		super("Generator");
 
 		addInport("start");
 		addOutport("outFromEXPF");
-		addInport("stop");
+		addOutport("stop");
 
 		initialize();
 	}
@@ -32,10 +33,11 @@ public class Generator extends ViewableAtomic {
 		dayCounter = 1;
 		super.initialize();
 		time = 0;
+		generationDone = false;
 		System.out.println("1. init generator");
 	}
 
-	public void deltint(double e, message x) {
+	public void deltint(double d) {
 		System.out.println("1. internal generator");
 		if (phaseIs("active")) {
 			time++;
@@ -56,13 +58,18 @@ public class Generator extends ViewableAtomic {
 
 	public message out() {
 		System.out.println("1. out generator: " + genValMultiplier);
-		
-		calculateValues();
-		
 		message m = new message();
+
+		calculateValues();
+
 		m.add(makeContent("outFromEXPF", new doubleEnt(genValMultiplier)));
 		System.out.println("Generator Time gen: " + time);
 		time++;
+		
+		if(generationDone) {
+			m.add(makeContent("stop", new doubleEnt(-1)));
+		}
+
 		return m;
 	}
 
@@ -81,20 +88,29 @@ public class Generator extends ViewableAtomic {
 	}
 
 	private void calculateValues() {
-		timeCycle = (int) time % 24;
+		if (monthCounter == 0) {
 
-		if (timeCycle == 23)
-			dayCounter++;
+			timeCycle = (int) time % 24;
 
-		int monthLength = year.getMonths().get(monthCounter).getLength();
-		if (dayCounter == monthLength)
-			monthCounter++;
+			if (timeCycle == 23)
+				dayCounter++;
 
-		genValMultiplier = year.getMonths().get(monthCounter).getDayArray()[timeCycle];
-		System.out.println("Time: " + time + ", Index month: " + monthCounter + ", Index time: " + timeCycle
-				+ ", The value for month and hour is: " + genValMultiplier);
+			int monthLength = year.getMonths().get(monthCounter).getLength();
+			if (dayCounter == monthLength)
+				monthCounter++;
 
-		System.out.println("Day: " + dayCounter);
-		System.out.println("Month: " + monthCounter);
+			// genValMultiplier =
+			// year.getMonths().get(monthCounter).getDayArray()[timeCycle];
+			genValMultiplier = year.getMonths().get(monthCounter).getAllDaysInMonth().get(dayCounter)
+					.getDayArray()[timeCycle];
+			System.out.println("Time: " + time + ", Index month: " + monthCounter + ", Index time: " + timeCycle
+					+ ", The value for month and hour is: " + genValMultiplier);
+
+			System.out.println("Day: " + dayCounter);
+			System.out.println("Month: " + monthCounter);
+		} else {
+			generationDone = true;
+			System.out.println("Geerator done!!!!!!!!!!!!!!!!!!!!!!!!");
+		}
 	}
 }

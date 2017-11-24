@@ -39,20 +39,6 @@ public class Battery extends ViewableAtomic { // ViewableAtomic is used instead
 		// car
 		addOutport("outExtraToLU");
 		addOutport("outToLU"); // Send the requested energy
-
-		/*
-		 * addTestInput("inFromLU", new Energy(5000)); addTestInput("inFromLU", new
-		 * Energy(7000)); addTestInput("inFromLU", new Energy(8000));
-		 * addTestInput("inFromLU", new Energy(14000)); addTestInput("inFromLU", new
-		 * Energy(3000)); addTestInput("inFromLU", new Energy(1000));
-		 * addTestInput("inFromLURequest", new Energy(1000));
-		 * addTestInput("inFromLURequest", new Energy(5000));
-		 * addTestInput("inFromLURequest", new Energy(6000));
-		 * addTestInput("inFromLURequest", new Energy(8000));
-		 * addTestInput("inFromLURequest", new Energy(12000));
-		 * addTestInput("inFromLURequest", new Energy(1000));
-		 * addTestInput("inFromLURequest", new Energy(5000));
-		 */
 	}
 
 	public Battery(String name, int noOfBatteries, double stateOfCharge) {
@@ -129,7 +115,6 @@ public class Battery extends ViewableAtomic { // ViewableAtomic is used instead
 				holdIn(phase, 1);
 			}
 		}
-		//// Everything from above should probably be the case for all phases
 	}
 
 	public void deltint(double e, message x) {

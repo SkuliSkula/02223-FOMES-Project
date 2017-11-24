@@ -8,6 +8,7 @@ public class Year {
 	public Year() {
 		months = new ArrayList<>();
 		initializeMonths();
+
 	}
 
 	public ArrayList<Month> getMonths() {
@@ -29,14 +30,6 @@ public class Year {
 		months.add(new Month("October", 31, hours3()));
 		months.add(new Month("November", 30, hours1()));
 		months.add(new Month("December", 31, hours1()));
-	}
-
-	public void setToZero() {
-		for (int i = 0; i < months.size(); i++) {
-			for (int j = 0; j < 24; j++) {
-				months.get(i).dayArray[j] = 0;
-			}
-		}
 	}
 
 	private double[] hours1() {
@@ -245,16 +238,28 @@ public class Year {
 	class Month {
 		private String month;
 		private int length;
-		private double[] dayArray;
+		private ArrayList<Day> allDaysInMonth;
+		private double[] sunlightHours;
 
-		private Month(String month, int length, double[] dayArray) {
+		private Month(String month, int length, double[] sunlightHours) {
 			this.month = month;
 			this.length = length;
-			this.dayArray = dayArray;
+
+			this.allDaysInMonth = new ArrayList<>();
+			this.sunlightHours = sunlightHours;
+
+			initializeDays();
 		}
 
-		public double[] getDayArray() {
-			return this.dayArray;
+		private void initializeDays() {
+			for (int i = 0; i < length; i++) {
+				Day newDay = new Day("-" + (i + 1));
+				allDaysInMonth.add(newDay);
+			}
+		}
+
+		public ArrayList<Day> getAllDaysInMonth() {
+			return this.allDaysInMonth;
 		}
 
 		public int getLength() {
@@ -263,6 +268,32 @@ public class Year {
 
 		public String getMonthName() {
 			return this.month;
+		}
+
+		public void setHoursInDaysToZero() {
+			for (int i = 0; i < allDaysInMonth.size(); i++) {
+				for (int j = 0; j < 24; j++) {
+					allDaysInMonth.get(i).getDayArray()[j] = 0;
+				}
+			}
+		}
+	}
+
+	class Day {
+		private String day;
+		private double[] dayArray;
+
+		private Day(String day) {
+			this.day = day;
+			this.dayArray = new double[24];
+		}
+
+		public double[] getDayArray() {
+			return this.dayArray;
+		}
+
+		public String getDay() {
+			return this.day;
 		}
 	}
 }
