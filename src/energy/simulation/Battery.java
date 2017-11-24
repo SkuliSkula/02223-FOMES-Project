@@ -165,4 +165,8 @@ public class Battery extends ViewableAtomic { // ViewableAtomic is used instead
 		}
 		return m;
 	}
+	
+	public String getTooltipText() {
+		return super.getTooltipText() + "\n" + "Available storage: " + availableStorage + "\nState of charge: " + stateOfCharge;
+	}
 }
