@@ -24,11 +24,11 @@ public class HomeAutomationSystem extends ViewableDigraph {
 		addInport("in");
 		addOutport("outOfSimulation");
 
-		ViewableAtomic generator = new Generator();
+		ViewableAtomic generator = new Generator(5);
 		ViewableAtomic trancuder = new Transducer();
 		ViewableAtomic pv = new PhotoVoltaicPanel("PV", 42);
 		ViewableAtomic lu = new LogicUnit("LU");
-		ViewableAtomic bat = new Battery("Battery", 18, 0);
+		ViewableAtomic bat = new Battery("Battery", 180, 0);
 		//ViewableAtomic car = new ElectricCar();
 		ViewableAtomic grid = new ExternalPowerGrid();
 		ViewableAtomic house = new House("House");
@@ -46,6 +46,7 @@ public class HomeAutomationSystem extends ViewableDigraph {
 
 		addCoupling(this, "in", generator, "start");
 		addCoupling(generator, "outFromEXPF", pv, "inFromEXPF");
+		addCoupling(generator, "stop", trancuder, "stop");
 		addCoupling(pv, "outToLU", lu, "inFromPVPanel");
 		addCoupling(lu, "outToBattery", bat, "inFromLU");
 		addCoupling(bat, "outExtraToLU", lu, "inExtraFromBattery");
