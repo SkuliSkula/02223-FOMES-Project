@@ -6,8 +6,11 @@ import view.modeling.ViewableAtomic;
 public class House extends ViewableAtomic {
 	private double energyRequested;
 	private Energy deltaEnergy;
-	private final static double[] CONSUMPTION_WH = { 110, 110, 110, 110, 110, 110, 110, 400, 400, 110, 110, 110, 110, 110, 110,
-			110, 110, 450, 450, 450, 450, 400, 110, 110 };
+	private final static double RC = 658.90;	//regular consumption
+	private final static double MC = 2398.39;	//medium consumption
+	private final static double PC = 2694.90;	//peak consumption
+	private final static double[] CONSUMPTION_WH = { RC, RC, RC, RC, RC, RC, RC, MC, MC, RC, RC, RC, RC, RC, RC,
+			RC, RC, PC, PC, PC, PC, MC, RC, RC };
 
 	private final int INC_TIME = 1;
 	private double consumed;
