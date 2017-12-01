@@ -51,7 +51,6 @@ public class PhotoVoltaicPanel extends ViewableAtomic {
 	public void deltint(double e, message x) {
 		System.out.println("2. PV panel internal ");
 		System.out.println("Incrementing time in deltInt PVPanel!");
-		time++;
 		if (phaseIs("active")) {
 			time++;
 			holdIn("idle", 1);
@@ -75,7 +74,6 @@ public class PhotoVoltaicPanel extends ViewableAtomic {
 			m.add(makeContent("outToLU", new Energy(generated, time)));
 			System.out.println("2. Pv panel out() sending: " + generated + " at time " + time);
 		}
-		time++;
 		return m;
 	}
 }

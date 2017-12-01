@@ -72,11 +72,11 @@ public class HomeAutomationSystem extends ViewableDigraph {
     {
         preferredSize = new Dimension(805, 332);
         ((ViewableComponent)withName("PV")).setPreferredLocation(new Point(-46, 259));
-        ((ViewableComponent)withName("Transducer")).setPreferredLocation(new Point(210, 21));
-        ((ViewableComponent)withName("House")).setPreferredLocation(new Point(386, 221));
-        ((ViewableComponent)withName("LU")).setPreferredLocation(new Point(121, 132));
-        ((ViewableComponent)withName("Generator")).setPreferredLocation(new Point(-31, 152));
         ((ViewableComponent)withName("External Grid")).setPreferredLocation(new Point(50, 50));
+        ((ViewableComponent)withName("House")).setPreferredLocation(new Point(386, 221));
         ((ViewableComponent)withName("Battery")).setPreferredLocation(new Point(159, 266));
+        ((ViewableComponent)withName("Transducer")).setPreferredLocation(new Point(210, 21));
+        ((ViewableComponent)withName("Generator")).setPreferredLocation(new Point(-32, 161));
+        ((ViewableComponent)withName("LU")).setPreferredLocation(new Point(121, 132));
     }
 }

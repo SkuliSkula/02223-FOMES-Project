@@ -25,13 +25,27 @@ public class Generator extends ViewableAtomic {
 		addTestInput("start", new entity());
 		addTestInput("stop", new entity());
 
+
+		monthCounter = 0;
+		finalMonth = monthCounter;
+		
 		initialize();
 	}
-	
-	public Generator(int monthNumber){
-		this();
+
+	public Generator(int monthNumber) {
+		super("Generator");
+
+		addInport("start");
+		addOutport("outFromEXPF");
+		addOutport("stop");
+
+		addTestInput("start", new entity());
+		addTestInput("stop", new entity());
+
+		initialize();
 		this.monthCounter = monthNumber - 1;
 		this.finalMonth = monthCounter;
+		System.out.println("Final Month " + monthCounter);
 	}
 
 	public void initialize() {
@@ -39,8 +53,6 @@ public class Generator extends ViewableAtomic {
 		timeCycle = 0;
 		year = new Year();
 
-		monthCounter = 0;
-		finalMonth = monthCounter;
 		dayCounter = 1;
 		super.initialize();
 		time = 0;
@@ -80,8 +92,8 @@ public class Generator extends ViewableAtomic {
 			System.out.println("Generator Time gen: " + time);
 		}
 		// time++;
-		
-		if(generationDone) {
+
+		if (generationDone) {
 			m.add(makeContent("stop", new doubleEnt(-1)));
 		}
 		return m;
@@ -102,6 +114,7 @@ public class Generator extends ViewableAtomic {
 	}
 
 	private void calculateValues() {
+		System.out.println("calc values");
 		if (this.monthCounter == finalMonth) {
 			timeCycle = (int) time % 24;
 
@@ -112,8 +125,6 @@ public class Generator extends ViewableAtomic {
 			if (dayCounter == monthLength)
 				monthCounter++;
 
-			// genValMultiplier =
-			// year.getMonths().get(monthCounter).getDayArray()[timeCycle];
 			genValMultiplier = year.getMonths().get(monthCounter).getAllDaysInMonth().get(dayCounter)
 					.getDayArray()[timeCycle];
 			System.out.println("Time: " + time + ", Index month: " + monthCounter + ", Index time: " + timeCycle
@@ -122,6 +133,7 @@ public class Generator extends ViewableAtomic {
 			System.out.println("Day: " + dayCounter);
 			System.out.println("Month: " + monthCounter);
 		} else {
+			holdIn("passive", INFINITY);
 			generationDone = true;
 			System.out.println("Generator done!!!!!!!!!!!!!!!!!!!!!!!!");
 		}

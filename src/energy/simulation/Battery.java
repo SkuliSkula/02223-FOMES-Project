@@ -7,7 +7,7 @@ import view.modeling.ViewableAtomic;
 public class Battery extends ViewableAtomic { // ViewableAtomic is used instead
 												// of atomic due to its
 												// graphics capability
-	private final static double BATTERY_CAPACITY = 135;
+	private final static double BATTERY_CAPACITY = 13500;
 	private final static double MIN_PERCENT = 25, MAX_PERCENT = 85;
 	protected static final double INC_TIME = 1;
 	private double availableStorage;

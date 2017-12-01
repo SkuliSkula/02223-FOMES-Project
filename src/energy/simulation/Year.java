@@ -22,7 +22,7 @@ public class Year {
 		months.add(new Month("February", 28, hours2()));
 		months.add(new Month("March", 31, hours4()));
 		months.add(new Month("April", 30, hours5()));
-		months.add(new Month("Mai", 31, hours8()));
+		months.add(new Month("May", 31, hours8()));
 		months.add(new Month("June", 30, hours8()));
 		months.add(new Month("July", 31, hours8()));
 		months.add(new Month("August", 31, hours7()));
@@ -253,7 +253,7 @@ public class Year {
 
 		private void initializeDays() {
 			for (int i = 0; i < length; i++) {
-				Day newDay = new Day("-" + (i + 1));
+				Day newDay = new Day("-" + (i + 1), sunlightHours);
 				allDaysInMonth.add(newDay);
 			}
 		}
@@ -283,9 +283,12 @@ public class Year {
 		private String day;
 		private double[] dayArray;
 
-		private Day(String day) {
+		private Day(String day, double[] sun) {
 			this.day = day;
 			this.dayArray = new double[24];
+			for (int i = 0; i < sun.length; i++) {
+				this.dayArray[i] = sun[i];
+			}
 		}
 
 		public double[] getDayArray() {
