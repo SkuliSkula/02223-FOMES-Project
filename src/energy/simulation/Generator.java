@@ -13,6 +13,7 @@ public class Generator extends ViewableAtomic {
 	private int time;
 	double genValMultiplier;
 	private boolean generationDone;
+	private int finalMonth;
 
 	public Generator() {
 		super("Generator");
@@ -26,6 +27,12 @@ public class Generator extends ViewableAtomic {
 
 		initialize();
 	}
+	
+	public Generator(int monthNumber){
+		this();
+		this.monthCounter = monthNumber - 1;
+		this.finalMonth = monthCounter;
+	}
 
 	public void initialize() {
 		holdIn("passive", INFINITY);
@@ -33,6 +40,7 @@ public class Generator extends ViewableAtomic {
 		year = new Year();
 
 		monthCounter = 0;
+		finalMonth = monthCounter;
 		dayCounter = 1;
 		super.initialize();
 		time = 0;
@@ -94,8 +102,7 @@ public class Generator extends ViewableAtomic {
 	}
 
 	private void calculateValues() {
-		if (monthCounter == 0) {
-
+		if (this.monthCounter == finalMonth) {
 			timeCycle = (int) time % 24;
 
 			if (timeCycle == 23)
@@ -116,7 +123,7 @@ public class Generator extends ViewableAtomic {
 			System.out.println("Month: " + monthCounter);
 		} else {
 			generationDone = true;
-			System.out.println("Geerator done!!!!!!!!!!!!!!!!!!!!!!!!");
+			System.out.println("Generator done!!!!!!!!!!!!!!!!!!!!!!!!");
 		}
 	}
 }
