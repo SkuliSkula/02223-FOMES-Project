@@ -41,6 +41,7 @@ public class PhotoVoltaicPanel extends ViewableAtomic {
 				System.out.println("Value obtained from Generator in PV panel: " + ent.getv());
 				System.out.println("Time in PV panel: " + time);
 				generated = (int) (genVal * ent.getv());
+				time++;
 				System.out.println("PV panel Generated energy: " + generated);
 				holdIn("active", 0);
 			}
@@ -52,7 +53,7 @@ public class PhotoVoltaicPanel extends ViewableAtomic {
 		System.out.println("2. PV panel internal ");
 		System.out.println("Incrementing time in deltInt PVPanel!");
 		if (phaseIs("active")) {
-			time++;
+			
 			holdIn("idle", 1);
 		}
 		if (phaseIs("idle")) {

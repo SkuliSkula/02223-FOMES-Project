@@ -109,11 +109,12 @@ public class Battery extends ViewableAtomic { // ViewableAtomic is used instead
 				holdIn("charging", 0);
 			}
 		} else {
-			if (outputEnergy.getEnergy() != 0) {
-				holdIn("discharging", 0);
-			} else {
-				holdIn(phase, 0);
-			}
+			if (outputEnergy != null)
+				if (outputEnergy.getEnergy() != 0) {
+					holdIn("discharging", 0);
+				} else {
+					holdIn(phase, 0);
+				}
 		}
 	}
 
@@ -165,8 +166,9 @@ public class Battery extends ViewableAtomic { // ViewableAtomic is used instead
 		}
 		return m;
 	}
-	
+
 	public String getTooltipText() {
-		return super.getTooltipText() + "\n" + "Available storage: " + availableStorage + "\nState of charge: " + stateOfCharge;
+		return super.getTooltipText() + "\n" + "Available storage: " + availableStorage + "\nState of charge: "
+				+ stateOfCharge;
 	}
 }
