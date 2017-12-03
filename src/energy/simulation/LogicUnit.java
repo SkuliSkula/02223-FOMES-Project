@@ -7,6 +7,7 @@ public class LogicUnit extends ViewableAtomic {
 	protected Energy energyToHouse, energyToBattery, energyToGrid, energyToRequest/* , energyToEV */;
 	protected final static double EV_OUTPUT = 17300;
 	protected double time;
+	private int count;
 
 	public LogicUnit(String name) {
 		super(name);
@@ -22,6 +23,7 @@ public class LogicUnit extends ViewableAtomic {
 		addOutport("outToBattery");
 		addOutport("outToEG");
 		addOutport("outRequestEnergy"); // House or electric car can request
+		count = 0;
 		// energy
 		// addOutport("outToEV"); // EV = Electric vehicle
 		initialize();
@@ -38,6 +40,9 @@ public class LogicUnit extends ViewableAtomic {
 		Continue(e);
 		System.out.println("3. ################# Logic Unit external sigma = " + sigma + ", and elapsed time = " + e);
 		for (int i = 0; i < x.getLength(); i++) {
+			if (count >= 744) {
+				passivate();
+			}
 			System.out.println("in loop");
 			if (messageOnPort(x, "inFromPVPanel", i)) {
 				System.out.println("3. Logic Unit found message from pv panel on port");
@@ -63,6 +68,7 @@ public class LogicUnit extends ViewableAtomic {
 				Energy receivedEnergy = (Energy) x.getValOnPort("inFromBattery", i);
 				this.energyToHouse = receivedEnergy;
 				holdIn("active", 0);
+				count++;
 			}
 		}
 

@@ -39,11 +39,23 @@ public class Battery extends ViewableAtomic { // ViewableAtomic is used instead
 		// car
 		addOutport("outExtraToLU");
 		addOutport("outToLU"); // Send the requested energy
+		initialize();
 	}
 
 	public Battery(String name, int noOfBatteries, double stateOfCharge) {
-		this(name, noOfBatteries);
+		super(name);
+		this.noOfBatteries = noOfBatteries;
+		this.totalCapacity = this.noOfBatteries * (BATTERY_CAPACITY / 100 * (MAX_PERCENT - MIN_PERCENT));
+		this.availableStorage = totalCapacity-stateOfCharge;
 		this.stateOfCharge = stateOfCharge;
+		this.excessEnergy = null;
+		addInport("inFromLU"); // Charge the battery
+		addInport("inFromLURequest"); // Requested energy from House or
+		// Electric
+		// car
+		addOutport("outExtraToLU");
+		addOutport("outToLU"); // Send the requested energy
+		initialize();
 	}
 
 	public void initialize() {
@@ -63,16 +75,20 @@ public class Battery extends ViewableAtomic { // ViewableAtomic is used instead
 			if (messageOnPort(x, "inFromLU", i)) {
 				Energy pvEnergy = (Energy) x.getValOnPort("inFromLU", i);
 				System.out.println("4. Received energy from LU: " + pvEnergy.getEnergy());
-				if (pvEnergy.getEnergy() <= availableStorage || pvEnergy.getEnergy() > (noOfBatteries - 1) * 5000) {
+				if (pvEnergy.getEnergy() > (noOfBatteries - 1) * 5000) {
+					availableStorage -= (noOfBatteries - 1) * 5000;
+					stateOfCharge += (noOfBatteries - 1) * 5000;
+					excessEnergy = new Energy(pvEnergy.getEnergy() - ((noOfBatteries - 1) * 5000), pvEnergy.getTime());
+				} else if (pvEnergy.getEnergy() <= availableStorage) {
 					charging = true;
 					availableStorage -= pvEnergy.getEnergy();
 					stateOfCharge += pvEnergy.getEnergy();
-				} else if (pvEnergy.getEnergy() <= availableStorage) {
+
+				} else if (pvEnergy.getEnergy() > availableStorage) {
 					charging = true;
-					availableStorage -= (noOfBatteries - 1) * 5000;
-					stateOfCharge += (noOfBatteries - 1) * 5000;
-					excessEnergy = new Energy(pvEnergy.getEnergy() - (noOfBatteries - 1) * 5000, pvEnergy.getTime());// Time
-																														// added
+					excessEnergy = new Energy(pvEnergy.getEnergy() - availableStorage, pvEnergy.getTime());
+					availableStorage = 0;
+					stateOfCharge = totalCapacity;
 				} else {
 					if (availableStorage != 0)
 						charging = true;

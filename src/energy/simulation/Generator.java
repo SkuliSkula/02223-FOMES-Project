@@ -25,10 +25,9 @@ public class Generator extends ViewableAtomic {
 		addTestInput("start", new entity());
 		addTestInput("stop", new entity());
 
-
 		monthCounter = 0;
 		finalMonth = monthCounter;
-		
+
 		initialize();
 	}
 
@@ -53,7 +52,7 @@ public class Generator extends ViewableAtomic {
 		timeCycle = 0;
 		year = new Year();
 
-		dayCounter = 1;
+		dayCounter = 0;
 		super.initialize();
 		time = 0;
 		generationDone = false;
@@ -125,8 +124,10 @@ public class Generator extends ViewableAtomic {
 			if (dayCounter == monthLength)
 				monthCounter++;
 
-			genValMultiplier = year.getMonths().get(monthCounter).getAllDaysInMonth().get(dayCounter)
-					.getDayArray()[timeCycle];
+			if (dayCounter < year.getMonths().get(monthCounter).getAllDaysInMonth().size()) {
+				genValMultiplier = year.getMonths().get(monthCounter).getAllDaysInMonth().get(dayCounter)
+						.getDayArray()[timeCycle];
+			}
 			System.out.println("Time: " + time + ", Index month: " + monthCounter + ", Index time: " + timeCycle
 					+ ", The value for month and hour is: " + genValMultiplier);
 

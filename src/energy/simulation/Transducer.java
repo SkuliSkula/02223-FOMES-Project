@@ -58,12 +58,12 @@ public class Transducer extends ViewableAtomic {
 		houseUsage = new Year();
 		extraEnergyGrid = new Year();
 
-		currentMonth = 5;
+		currentMonth = 4;
 		currentMonthIndex = currentMonth - 1;
 		houseUsage.getMonths().get(currentMonthIndex).setHoursInDaysToZero();
 		extraEnergyGrid.getMonths().get(currentMonthIndex).setHoursInDaysToZero();
 
-		HOURS_IN_MONTH = 744;
+		HOURS_IN_MONTH = 720;
 		System.out.println("HOURS IN MONTH ARE: " + HOURS_IN_MONTH);
 
 		super.initialize();
